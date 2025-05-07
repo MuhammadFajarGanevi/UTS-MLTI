@@ -1,0 +1,52 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+!define DEVICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons
+!define FONTAWESOME https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/font-awesome-5
+!include DEVICONS/laravel.puml
+!include DEVICONS/mysql.puml
+!include FONTAWESOME/users.puml
+
+!include <office/Concepts/firewall>
+!include <office/Servers/application_server>
+!include <office/Concepts/service_application>
+
+left to right direction
+
+AddRelTag("firewall", $textColor="$ARROW_FONT_COLOR", $lineColor="$ARROW_COLOR", $sprite="firewall,scale=0.3,color=red", $legendText="firewall")
+
+AddContainerTag("webApp", $sprite="application_server", $legendText="web app container")
+
+AddSystemTag("conApp", $sprite="service_application", $legendText="system")
+
+
+Person(user, "Kader Posyandu", "Yang bertugas di Posyandu", $sprite="users")
+Person(remaja, "Remaja", "Remaja di wilayah Posyandu", $sprite="users")
+Person_Ext(puskesmas, "Petugas Pukesmas", "Memantau perkembangan Posyandu", $sprite="users")
+Person(vendor, "Vendor IT", "Vendor yang Maintenace Sistem", $sprite="users")
+Person(qa, "Quality Assurance", "Yang bertanggung jawab pada Servana System", $sprite="users")
+System_Boundary(c1, "Posyandu System") {
+  Container(spa1, "Web Application", "html, css, vuejs, vuetify, sneat", $tags="webApp")
+  Container(api1, "API Application", "Laravel", "Handles all business logic", $sprite="laravel")
+  ContainerDb(db1, "Database", "Mysql Database", $sprite="mysql")
+}
+System_Boundary(c2, "Servana System") {
+  Container(spa2, "Web Application", "html, css, vuejs, vuetify, sneat", $tags="webApp")
+  Container(api2, "API Application", "Laravel", "Handles all business logic", $sprite="laravel")
+  ContainerDb(db2, "Database", "Mysql Database", $sprite="mysql")
+}
+
+Rel(user, spa1, "Uses", "HTTPS", $tags="firewall")
+Rel(remaja, spa1, "Uses", "HTTPS", $tags="firewall")
+Rel(puskesmas, spa1, "Uses", "HTTPS", $tags="firewall")
+Rel(spa1, api1, "Uses", "HTTPS/REST")
+Rel_U(spa2, api2, "Uses", "HTTPS/REST")
+Rel_R(api1, db1, "Reads from and writes to", "SQL/JDBC, port 3306")
+Rel_L(api2, db2, "Reads from and writes to", "SQL/JDBC, port 3306")
+Rel(api2, api1, "Uses", "HTTPS/REST")
+Rel_U(vendor, spa2, "Uses", "HTTPS", $tags="firewall")
+Rel_U(qa, spa2, "Uses", "HTTPS", $tags="firewall")
+
+
+SHOW_LEGEND()
+@enduml
