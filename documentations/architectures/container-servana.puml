@@ -1,0 +1,45 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+!define DEVICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons
+!define FONTAWESOME https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/font-awesome-5
+!include DEVICONS/laravel.puml
+!include DEVICONS/mysql.puml
+!include FONTAWESOME/users.puml
+
+!include <office/Concepts/firewall>
+!include <office/Servers/application_server>
+!include <office/Concepts/service_application>
+
+left to right direction
+
+AddRelTag("firewall", $textColor="$ARROW_FONT_COLOR", $lineColor="$ARROW_COLOR", $sprite="firewall,scale=0.3,color=red", $legendText="firewall")
+
+AddContainerTag("webApp", $sprite="application_server", $legendText="web app container")
+
+AddSystemTag("conApp", $sprite="service_application", $legendText="system")
+
+
+Person(user, "Kader Posyandu", "Yang bertugas di Posyandu", $sprite="users")
+Person(remaja, "Remaja", "Remaja di wilayah Posyandu", $sprite="users")
+Person_Ext(puskesmas, "Petugas Pukesmas", "Memantau perkembangan Posyandu", $sprite="users")
+Person(vendor, "Vendor IT", "Vendor yang Maintenace Sistem", $sprite="users")
+Person(qa, "Quality Assurance", "Yang bertanggung jawab pada Servana System", $sprite="users")
+System_Boundary(c1, "Servana System") {
+  Container(spa, "Web Application", "html, css, vuejs, vuetify, sneat", $tags="webApp")
+  Container(api, "API Application", "Laravel", "Handles all business logic", $sprite="laravel")
+  ContainerDb(db, "Database", "Mysql Database", $sprite="mysql")
+}
+System(posyandu, "posyandu system", "sistem aplikasi posyandu", $tags="conApp")
+
+Rel(user, posyandu, "Uses", "HTTPS", $tags="firewall")
+Rel(remaja, posyandu, "Uses", "HTTPS", $tags="firewall")
+Rel(puskesmas, posyandu, "Uses", "HTTPS", $tags="firewall")
+Rel(api, db, "Reads from and writes to", "SQL/JDBC, port 3306")
+Rel_U(spa, api, "Uses", "HTTPS/REST")
+Rel_R(api, posyandu, "Uses", "HTTPS/REST")
+Rel_U(vendor, spa, "Uses", "HTTPS", $tags="firewall")
+Rel_U(qa, spa, "Uses", "HTTPS", $tags="firewall")
+
+SHOW_LEGEND()
+@enduml
