@@ -7,6 +7,7 @@ use App\Enums\ApiStatusEnum;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use App\Exceptions\ApiResponseException;
 
 class AuthenticationService
@@ -34,7 +35,7 @@ class AuthenticationService
                 'personal_access_tokens',
                 ['*'],
                 $expiresAt = Carbon::now()->addMinutes(
-                    config("sanctum." . ($loginDto->isRememberMe ? "long_lived_expiration" : "short_lived_expiration"))
+                    config("sanctum." . ($loginDto->is_remember_me ? "long_lived_expiration" : "short_lived_expiration"))
                 )
             )->plainTextToken;
 
@@ -77,10 +78,6 @@ class AuthenticationService
 
         $user->password = Hash::make($resetPasswordDto->newPassword);
         $user->save();
-
-        return [
-            'message' => 'Password reset successfully.',
-        ];
    }
 
     /**
@@ -90,7 +87,8 @@ class AuthenticationService
      */
     public static function refreshToken()
     {
-        $token = Auth::user()->createToken(
+        $user = Auth::user();
+        $token = $user->createToken(
             'personal_access_tokens',
             ['*'],
             $expiresAt = Carbon::now()->addMinutes(
@@ -104,7 +102,8 @@ class AuthenticationService
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
-            ]
+            ],
+            'expires_at' => $expiresAt->toDateTimeString()
         ];
     }
 }

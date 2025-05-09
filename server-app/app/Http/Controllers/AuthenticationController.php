@@ -33,7 +33,7 @@ class AuthenticationController extends Controller
     {
         $token = AuthenticationService::login($loginDto);
 
-        return ($$this->response)(ApiResponseDto::from($token));
+        return ($this->response)(ApiResponseDto::from(["data" => $token]));
     }
 
     /**
@@ -46,7 +46,7 @@ class AuthenticationController extends Controller
     {
         AuthenticationService::resetPassword($resetPasswordDto);
 
-        return ($$this->response)(ApiResponseDto::from());
+        return ($this->response)(ApiResponseDto::from());
     }
 
     /**
@@ -58,6 +58,6 @@ class AuthenticationController extends Controller
     {
         $token = AuthenticationService::refreshToken();
 
-        return ($$this->response)(ApiResponseDto::from($token));
+        return ($this->response)(ApiResponseDto::from($token));
     }
 }
