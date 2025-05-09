@@ -6,8 +6,10 @@ use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Database\QueryException;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use App\DTOs\Data\ApiResponseDto;
+use App\DTOs\ApiResponseDto;
 use App\Services\ApiResponseService;
+use App\Enums\ApiStatusEnum;
+use App\Exceptions\ApiResponseException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -20,7 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        $response = app(APIResponseService::class);
+        $response = app(ApiResponseService::class);
 
         $exceptions->render(
             fn(ValidationException $exception, $request) => ($response)(
@@ -28,7 +30,7 @@ return Application::configure(basePath: dirname(__DIR__))
                     "status" => false,
                     "errors" => $exception->validator->errors()->all()
                 ]),
-                APIStatusEnum::BAD_REQUEST
+                ApiStatusEnum::BAD_REQUEST
             )
         );
 
@@ -41,7 +43,7 @@ return Application::configure(basePath: dirname(__DIR__))
                         $exception->getMessage()
                     ]
                 ]),
-                APIStatusEnum::INTERNAL_SERVER_ERROR
+                ApiStatusEnum::INTERNAL_SERVER_ERROR
             )
         );
 
@@ -54,7 +56,7 @@ return Application::configure(basePath: dirname(__DIR__))
                         $exception->getMessage()
                     ]
                 ]),
-                APIStatusEnum::UNPROCESSABLE_ENTITY
+                ApiStatusEnum::UNPROCESSABLE_ENTITY
             )
         );
 
@@ -67,7 +69,7 @@ return Application::configure(basePath: dirname(__DIR__))
                         $exception->getMessage()
                     ]
                 ]),
-                APIStatusEnum::NOT_FOUND
+                ApiStatusEnum::NOT_FOUND
             )
         );
 
@@ -77,12 +79,12 @@ return Application::configure(basePath: dirname(__DIR__))
                     "status" => false,
                     "errors" => [$exception->getMessage()]
                 ]),
-                APIStatusEnum::NOT_FOUND
+                ApiStatusEnum::NOT_FOUND
             )
         );
 
         $exceptions->render(
-            fn(APIResponseException $exception, $request) => ($response)(
+            fn(ApiResponseException $exception, $request) => ($response)(
                 ApiResponseDto::from([
                     "status" => false,
                     "errors" => $exception->getAllMessage()
@@ -99,7 +101,7 @@ return Application::configure(basePath: dirname(__DIR__))
                     $exception->getMessage() == "Unauthenticated."
                 ) {
                     $errors = ["Unauthorization."];
-                    $status = APIStatusEnum::UNAUTHORIZED;
+                    $status = ApiStatusEnum::UNAUTHORIZED;
                 }
 
                 return ($response)(
@@ -110,7 +112,7 @@ return Application::configure(basePath: dirname(__DIR__))
                             $exception->getMessage()
                         ]
                     ]),
-                    $status ?? APIStatusEnum::INTERNAL_SERVER_ERROR
+                    $status ?? ApiStatusEnum::INTERNAL_SERVER_ERROR
                 );
             }
         });

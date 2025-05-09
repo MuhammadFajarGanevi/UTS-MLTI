@@ -2,12 +2,12 @@
 
 namespace App\Services;
 
-use App\DTOs\APIResponseData;
-use App\Enums\APIStatusEnum;
+use App\DTOs\ApiResponseDto;
+use App\Enums\ApiStatusEnum;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class APIResponseService
+class ApiResponseService
 {
     protected Request $request;
 
@@ -26,7 +26,7 @@ class APIResponseService
      * @param APIStatusEnum $status
      * @return JsonResponse
      */
-    public function __invoke(APIResponseData $response, ?APIStatusEnum $status = APIStatusEnum::SUCCESS): JsonResponse
+    public function __invoke(ApiResponseDto $response, ?ApiStatusEnum $status = ApiStatusEnum::SUCCESS): JsonResponse
     {
         $result = [
             "status" => $response->status ?? true,

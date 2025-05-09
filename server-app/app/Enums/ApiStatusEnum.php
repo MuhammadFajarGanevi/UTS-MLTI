@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum APIStatusEnum: int
+enum ApiStatusEnum: int
 {
     case SUCCESS = 200;
     case CREATED = 201;
