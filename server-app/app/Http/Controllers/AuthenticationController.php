@@ -45,8 +45,6 @@ class AuthenticationController extends Controller
     public function resetPassword(ResetPasswordDto $resetPasswordDto, Request $request)
     {
         AuthenticationService::resetPassword($resetPasswordDto);
-
-        return ($this->response)(ApiResponseDto::from());
     }
 
     /**

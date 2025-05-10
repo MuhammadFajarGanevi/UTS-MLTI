@@ -33,6 +33,13 @@ paths:
       responses:
         200:
           content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ0ZXN0IiwiaWF0IjoxNjI0MDM0MjU5LCJleHAiOjE2MjQwMzQ5NTl9"
   /auth/reset-password:
     # endpoint GET /buku
     post:
@@ -64,10 +71,3 @@ paths:
       responses:
         200:
           content:
-  /buku:
-    # endpoint GET /buku
-    get:
-      tags:
-        - Buku
-      responses:
-
