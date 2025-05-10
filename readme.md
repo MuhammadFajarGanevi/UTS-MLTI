@@ -1,118 +1,48 @@
-# 🚀 init-repo-template
+# Servana – Sistem Manajemen Layanan TI Berbasis ITIL
 
-A complete, professional, and opinionated GitHub repository template designed to boost **consistency**, enhance **collaboration**, and support **scalable open-source** or private projects.
+## Ringkasan Proyek
 
-[A detailed discussion on CZ](https://dev.to/oskhar/commitizen-making-git-commits-the-right-way-g70)
+Servana adalah aplikasi manajemen layanan TI internal yang dikembangkan berdasarkan kerangka kerja ITIL. Aplikasi berbasis web ini menyediakan modul untuk Manajemen Insiden, Permintaan Layanan, Manajemen Masalah, Pelaporan & Analitik, Manajemen Pengguna, dan Pemantauan Kinerja Real-Time. Backend menggunakan Laravel (PHP) dan frontend memakai Vue.js dengan Vuetify dan template Sneat. Servana dirancang untuk membantu tim TI mengelola siklus hidup layanan dengan efektif, transparan, dan sesuai praktik terbaik ITIL (misalnya menjaga kinerja layanan dan kepuasan pengguna).
 
-> 📦 Ready-to-clone setup for teams who care about quality, clarity, and developer experience.
+## Arsitektur Sistem (C4 Model)
 
-## 🔥 Why use `init-repo-template`?
+### Diagram Konteks
 
-If you're tired of:
+&#x20;*Diagram konteks Servana (file `system-context.png`) menunjukkan entitas utama yang berinteraksi dengan sistem Servana. Servana berperan sebagai platform layanan TI internal yang menyediakan lingkungan pengembangan dan operasional stabil. Sistem ini berhubungan dengan tim pengguna internal (misalnya staf lapangan Posyandu) dan vendor IT pemeliharaan sistem. Diagram ini menegaskan batas sistem Servana dan peran eksternal seperti aplikasi layanan Posyandu serta tim Quality Assurance yang mengakses layanan Servana.*
 
-- inconsistent commit messages,
-- undocumented contribution flow,
-- messy collaboration practices,
-- or setting up the same configs over and over again...
+### Diagram Kontainer
 
-This repo is for you.
+&#x20;*Diagram kontainer Servana (file `container-overview.png`) menggambarkan pembagian sistem ke dalam container utama: aplikasi Web, aplikasi API, dan database.*
 
-✅ **Built to be reused** — Just clone, customize, and start coding.
+* **Web Application**: Aplikasi antarmuka pengguna berbasis Vue.js (Vuetify dengan template Sneat) diakses oleh pengguna layanan (misalnya kader Posyandu atau remaja).
+* **API Application**: Backend Laravel yang menangani semua logika bisnis dan menyediakan endpoint RESTful (API) untuk operasi data.
+* **Database**: MySQL sebagai basis data relasional, menyimpan informasi insiden, permintaan, pengguna, dll., yang dibaca/ditulis oleh API melalui koneksi SQL (port 3306).
 
-✅ **Optimized for collaboration** — Complete with interactive commit flow via Commitizen and a powerful `collaboration_guide.md`.
+Web App berkomunikasi dengan API lewat protokol HTTPS/REST, dan API membaca/menulis data ke Database. Struktur ini memastikan pemisahan jelas antara antarmuka pengguna, logika bisnis, dan penyimpanan data.
 
-✅ **Zero Node.js dependency requirement** — Works well even if your project isn’t JavaScript-based.
+## Fitur Utama
 
-## ✨ Features
+Seluruh fitur utama yang dibangun dalam aplikasi ini adalah di bawah ini:
+[Fitur Utama](fitur.md)
 
-- 📄 Predefined `.czrc` for consistent commit messages via Commitizen
-- 🧭 Clear [Collaboration Guide](collaboration_guide.md)
-- 📝 Semantic versioning & commit conventions (Conventional Commits)
-- 🛠️ GitHub-friendly structure with `.github` support
-- ⚡ Clean and modular template to scale with your team
+## Cara Kontribusi
 
-## 🧑‍💻 Getting Started
+Kami menyambut kontribusi dari komunitas. Untuk mulai berkontribusi, lihat:
 
-### 1. Clone this template
+* [Panduan Kolaborasi](collaboration_guide.md) untuk alur pengembangan dan aturan kontribusi.
+* [Kode Etik](code_of_conduct.md) untuk tata tertib dan etika proyek.
 
-```bash
-git clone https://github.com/your-username/init-repo-template.git your-project-name
-cd your-project-name
-```
+## Lisensi
 
-### 2. Configure Git & Collaboration Tools
+Proyek ini dilisensikan di bawah **MIT License**. MIT adalah lisensi perangkat lunak bebas yang permisif dengan pembatasan minimal terhadap penggunaan ulang kode. Lihat file `LICENSE` untuk teks lengkap lisensi ini.
 
-- Make sure you read the [📘 `collaboration_guide.md`](collaboration_guide.md).
-- It includes how to:
-  - Set up and use Commitizen with `.czrc`
-  - Follow the branching and PR workflow
-  - Keep documentation and changelogs clean
+## Catatan Implementasi
 
-### 3. Initialize your repo
+* **Backend (Laravel)**: API disusun secara modular per fitur. Setiap modul (mis. Insiden, Permintaan) memiliki folder tersendiri untuk Model, Controller, Route, dll..
+* **Frontend (Vue.js)**: Menggunakan *Single-File Components* (`.vue`) untuk menggabungkan template, logika, dan gaya dalam satu file. UI dibuat dengan Vuetify dan tema Sneat.
+* **Database**: MySQL sebagai basis data relasional.
+* **RESTful API**: Frontend berkomunikasi dengan backend melalui endpoint JSON (CRUD resources) menggunakan standar REST (data dikirim/diterima dalam format JSON).
 
-```bash
-git init
-git remote add origin <your-new-repo-url>
-npm install -g commitizen cz-git  # or cz-conventional-changelog if preferred
-```
+Dengan struktur ini, Servana memberikan dokumentasi arsitektur yang jelas dan modul yang terpisah per fitur, sesuai dengan prinsip pengembangan perangkat lunak modern dan praktik ITIL.
 
-> 💡 Already includes `.czrc` — you're ready to use `git cz` right away.
-
-## 🧠 What is `.czrc`?
-
-`.czrc` is a configuration file for [Commitizen](https://commitizen-tools.github.io/commitizen/). It defines how commit messages are written and which adapter to use.
-
-We use it to:
-
-- Maintain a **clean Git history**
-- Enable **automated changelog generation**
-- Improve **team communication** via clear commits
-
-To commit using Commitizen:
-
-```bash
-git add .
-git cz
-```
-
-And follow the interactive prompt.
-
-## 🤝 How to Collaborate
-
-Please **always refer to** [`collaboration_guide.md`](collaboration_guide.md) before pushing or opening a pull request. It explains:
-
-- How we write commits
-- How to open PRs
-- Branch naming
-- Code review etiquette
-
-> ⛔ Don't commit directly to `main` unless you're doing initial setup.
-
-## 💡 Recommended Use Cases
-
-- Open-source project templates
-- Internal company repositories
-- Bootstrapping monorepos
-- Teaching good Git practices to teams
-
-## 🔍 SEO Tags & Keywords
-
-> _init repo template_, _github repo starter_, _professional collaboration guide_, _conventional commit template_, _czrc guide without nodejs_, _interactive git commit convention_, _developer friendly repo structure_, _semantic commit bootstrap_
-
-## 📬 Questions or Feedback?
-
-Feel free to open an issue or start a discussion. This template evolves as more teams and individuals use it. Contributions are welcome!
-
-## 🪪 License
-
-MIT — use it freely, modify it proudly.
-
-## 🧩 Tip
-
-Want to see it in action? Clone this template into your own repo and make your first contribution using:
-
-```bash
-git cz
-```
-
-You'll **feel the difference** in how structured and efficient your repo becomes 💡
+**Referensi:** Dokumentasi ITIL dan praktik arsitektur C4.
