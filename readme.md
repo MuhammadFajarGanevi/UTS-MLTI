@@ -8,10 +8,12 @@ Servana adalah aplikasi manajemen layanan TI internal yang dikembangkan berdasar
 
 ### Diagram Konteks
 
+![Diagram konteks Servana (file `system-context.png`)](documentations/system-context.png)
 &#x20;*Diagram konteks Servana (file `system-context.png`) menunjukkan entitas utama yang berinteraksi dengan sistem Servana. Servana berperan sebagai platform layanan TI internal yang menyediakan lingkungan pengembangan dan operasional stabil. Sistem ini berhubungan dengan tim pengguna internal (misalnya staf lapangan Posyandu) dan vendor IT pemeliharaan sistem. Diagram ini menegaskan batas sistem Servana dan peran eksternal seperti aplikasi layanan Posyandu serta tim Quality Assurance yang mengakses layanan Servana.*
 
 ### Diagram Kontainer
 
+![Diagram kontainer Servana (file `container-overview.png`)](documentations/container-overview.png)
 &#x20;*Diagram kontainer Servana (file `container-overview.png`) menggambarkan pembagian sistem ke dalam container utama: aplikasi Web, aplikasi API, dan database.*
 
 * **Web Application**: Aplikasi antarmuka pengguna berbasis Vue.js (Vuetify dengan template Sneat) diakses oleh pengguna layanan (misalnya kader Posyandu atau remaja).
