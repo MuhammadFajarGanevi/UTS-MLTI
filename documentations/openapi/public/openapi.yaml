@@ -6,78 +6,68 @@ info:
   version: 0.0.1
 
 servers:
-  - url: http://localhost:3000
+  - url: http://localhost:8000/api/v1
 
 paths:
   # Write your own API endpoints
-  /buku:
+  /auth/login:
     # endpoint GET /buku
-    get:
-      tags:
-        - Buku
-      responses:
-        200:
-          content:
-    # endpoint POST /buku
     post:
       tags:
-        - Buku
+        - Authentication
       requestBody:
         content:
           application/json:
             schema:
               type: object
               properties:
-                judul:
+                email:
                   type: string
-                  example: "Domain Driven Design"
-                penulis:
+                  example: "admin@example.com"
+                password:
                   type: string
-                  example: "Eric Evans"
+                  example: "admin"
+                is_remember_me:
+                  type: boolean
+                  example: true
       responses:
         200:
           content:
-  /buku/{id}:
-    # endpoint GET /buku/{id}
-    get:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ0ZXN0IiwiaWF0IjoxNjI0MDM0MjU5LCJleHAiOjE2MjQwMzQ5NTl9"
+  /auth/reset-password:
+    # endpoint GET /buku
+    post:
       tags:
-        - Buku
-      parameters:
-        - name: id
-          in: path
-          schema:
-            type: integer
-      responses:
-        200:
-          content:
-    put:
-      tags:
-        - Buku
-      parameters:
-        - name: id
-          in: path
-          schema:
-            type: integer
+        - Authentication
       requestBody:
         content:
           application/json:
             schema:
               type: object
               properties:
-                judul:
+                old_password:
                   type: string
-                  example: "Domain-Driven Design: Tackling Complexity in the Heart of Software"
-                penulis:
+                  example: "123456"
+                new_password:
                   type: string
-                  example: "Eric Evans"
+                  example: "123456"
+                confirm_password:
+                  type: string
+                  example: "123456"
       responses:
         200:
           content:
-    delete:
+  /auth/refresh-token:
+    # endpoint GET /buku
+    post:
       tags:
-        - Buku
-      parameters:
-        - name: id
-          in: path
-          schema:
-            type: integer
+        - Authentication
+      responses:
+        200:
+          content:

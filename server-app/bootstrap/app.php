@@ -19,7 +19,13 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        /**
+         * Enable CORS.
+         */
+        $middleware->append([
+            \Illuminate\Http\Middleware\HandleCors::class,
+            \App\Http\Middleware\DefaultApiResponse::class
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $response = app(ApiResponseService::class);
