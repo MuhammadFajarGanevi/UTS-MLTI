@@ -13,6 +13,7 @@ class UpdateIncidentDto extends Data
 
         public ?int $resolver_id,
         public string $status,
+        public ?string $comment,
 
     ) {
     }

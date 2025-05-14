@@ -36,6 +36,14 @@ class IncidentService
     //  Function Post
     public static function create(CreateIncidentDto $createIncidentDto)
     {
+
+        // Validasi apakah status ada dalam enum
+        $validStatuses = array_column(IncidentStatus::cases(), 'value');
+
+        if (!in_array([$createIncidentDto->reporter_id, $createIncidentDto->category_id], $validStatuses)) {
+            throw new UnprocessableEntityHttpException('Error!!! Either reporter or category must be specified');
+        }
+
         Incident::create([
             'subject' => $createIncidentDto->subject,
             'description' => $createIncidentDto->description,
@@ -63,6 +71,7 @@ class IncidentService
         $incident->update([
             'resolver_id' => $updateIncidentDto->resolver_id,
             'status' => $updateIncidentDto->status,
+            'comment' => $updateIncidentDto->comment,
             'updated_at' => now(),
         ]);
     }
@@ -70,23 +79,74 @@ class IncidentService
     // Function getAll
     public static function getAll(FilterDto $filterDto)
     {
-        $incidents = Incident::paginate($filterDto->length);
+        $incidents = Incident::with(['reporter', 'resolver', 'category'])->paginate($filterDto->length);
 
-        // Format respons
+        $transformed = $incidents->getCollection()->map(function ($incident) {
+            return [
+                'id' => $incident->id,
+                'subject' => $incident->subject,
+                'status' => $incident->status,
+                'comment' => $incident->comment,
+                'created_at' => $incident->created_at,
+
+                'reporter' => [
+                    'id' => $incident->reporter?->id,
+                    'name' => $incident->reporter?->name,
+                ],
+                'resolver' => [
+                    'id' => $incident->resolver?->id,
+                    'name' => $incident->resolver?->name,
+                ],
+                'category' => [
+                    'id' => $incident->category?->id,
+                    'name' => $incident->category?->name,
+                ],
+            ];
+        });
+
+        $incidents->setCollection($transformed);
+
+        if ($incidents->total() === 0) {
+            abort(404, 'Data not found');
+        }
         return [
             'current_page' => $incidents->currentPage(),
             'total_data' => $incidents->total(),
             'total_page' => $incidents->lastPage(),
-            'data' => $incidents->items()
+            'data' => $incidents->items(),
         ];
     }
+
 
     // Function get with Id
     public static function getId(int $id)
     {
-        $incident = Incident::findOrFail($id);
-        return CreateIncidentDto::from($incident);
+        $incident = Incident::with(['reporter', 'resolver', 'category'])->findOrFail($id);
+
+        return [
+            'data' => [
+                'id' => $incident->id,
+                'subject' => $incident->subject,
+                'status' => $incident->status,
+                'comment' => $incident->comment,
+                'created_at' => $incident->created_at,
+
+                'reporter' => [
+                    'id' => $incident->reporter?->id,
+                    'name' => $incident->reporter?->name,
+                ],
+                'resolver' => [
+                    'id' => $incident->resolver?->id ?? 'null',
+                    'name' => $incident->resolver?->name ?? 'null',
+                ],
+                'category' => [
+                    'id' => $incident->category?->id,
+                    'name' => $incident->category?->name,
+                ],
+            ],
+        ];
     }
+
 
     // Function softDelete
     public static function delete(int $id)

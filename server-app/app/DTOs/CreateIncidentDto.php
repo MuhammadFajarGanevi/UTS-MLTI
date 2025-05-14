@@ -16,7 +16,6 @@ class CreateIncidentDto extends Data
         public int $reporter_id,
         public int $category_id,
         public ?int $resolver_id,
-        public ?string $comment,
     ) {
     }
 }

@@ -16,13 +16,13 @@ return new class extends Migration {
             $table->string('subject');
             $table->text('description');
             $table->foreignId('reporter_id')->constrained(
-                'users'
+                'users',
             );
             $table->foreignId('resolver_id')->nullable()->constrained(
-                'users'
+                'users',
             );
             $table->foreignId('category_id')->constrained(
-                'categories'
+                'categories',
             );
             $table->enum('status', ['submitted', 'in_progress', 'resolved'])->default('submitted');
             $table->text('comment')->nullable();

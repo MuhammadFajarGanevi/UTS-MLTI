@@ -20,7 +20,7 @@ class Category extends Model
     ];
     public function categoryIncident(): HasMany
     {
-        return $this->hasMany(Incident::class, 'category_id');
+        return $this->hasMany(Incident::class, 'incidents_category_id');
     }
 
 }

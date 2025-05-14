@@ -21,7 +21,8 @@ class Incident extends Model
         'reporter_id',
         'category_id',
         'resolver_id',
-        'status'
+        'status',
+        'comment'
     ];
 
     protected $casts = [
@@ -33,17 +34,17 @@ class Incident extends Model
 
     public function reporter(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'id');
+        return $this->belongsTo(User::class, 'reporter_id');
     }
 
     public function resolver(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'id');
+        return $this->belongsTo(User::class, 'resolver_id');
     }
 
     public function category(): BelongsTo
     {
-        return $this->belongsTo(Category::class, 'id');
+        return $this->belongsTo(Category::class, 'category_id');
     }
 
 }
