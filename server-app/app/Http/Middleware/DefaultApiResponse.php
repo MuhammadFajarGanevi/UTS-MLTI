@@ -46,7 +46,7 @@ class DefaultApiResponse
                 case 'PATCH':
                     return ($this->response)(ApiResponseDto::from(), ApiStatusEnum::SUCCESS);
                 case 'DELETE':
-                    return ($this->response)(ApiResponseDto::from(), 204);
+                    return ($this->response)(ApiResponseDto::from(), ApiStatusEnum::ACCEPTED);
             }
         }
 

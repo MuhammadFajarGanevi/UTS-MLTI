@@ -22,7 +22,7 @@ class ApiResponseService
     /**
      * Generate a JSON response.
      *
-     * @param APIResponseData $response
+     * @param APIResponseDto $response
      * @param APIStatusEnum $status
      * @return JsonResponse
      */
