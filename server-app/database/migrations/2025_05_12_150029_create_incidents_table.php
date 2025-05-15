@@ -21,9 +21,6 @@ return new class extends Migration {
             $table->foreignId('resolver_id')->nullable()->constrained(
                 'users',
             );
-            $table->foreignId('category_id')->constrained(
-                'categories',
-            );
             $table->enum('status', ['submitted', 'in_progress', 'resolved'])->default('submitted');
             $table->text('comment')->nullable();
             $table->timestamps();

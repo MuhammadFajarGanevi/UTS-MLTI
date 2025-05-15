@@ -34,22 +34,25 @@ class IncidentService
      */
 
     //  Function Post
-    public static function create(CreateIncidentDto $createIncidentDto)
+    public static function create(CreateIncidentDto $createIncidentDto): void
     {
-
-        // Validasi apakah status ada dalam enum
-        $validStatuses = array_column(IncidentStatus::cases(), 'value');
-
-        if (!in_array([$createIncidentDto->reporter_id, $createIncidentDto->category_id], $validStatuses)) {
+        // validate
+        if (!$createIncidentDto->reporter_id || !$createIncidentDto->category_id) {
             throw new UnprocessableEntityHttpException('Error!!! Either reporter or category must be specified');
         }
 
-        Incident::create([
+        // Buat incident
+        $incident = Incident::create([
             'subject' => $createIncidentDto->subject,
             'description' => $createIncidentDto->description,
             'reporter_id' => $createIncidentDto->reporter_id,
-            'category_id' => $createIncidentDto->category_id,
-            'status' => IncidentStatus::SUBMITTED
+            'status' => IncidentStatus::SUBMITTED,
+        ]);
+
+        // Hubungkan ke kategori (dari relasi many-to-many)
+        $incident->categories()->attach($createIncidentDto->category_id, [
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
     }
 
@@ -64,12 +67,11 @@ class IncidentService
             throw new UnprocessableEntityHttpException('error entity');
         }
 
-
         // Ambil data incident
         $incident = Incident::findOrFail($id); // agar
 
         $incident->update([
-            'resolver_id' => $updateIncidentDto->resolver_id,
+            'resolver' => $updateIncidentDto->resolver_id,
             'status' => $updateIncidentDto->status,
             'comment' => $updateIncidentDto->comment,
             'updated_at' => now(),
@@ -79,7 +81,13 @@ class IncidentService
     // Function getAll
     public static function getAll(FilterDto $filterDto)
     {
-        $incidents = Incident::with(['reporter', 'resolver', 'category'])->paginate($filterDto->length);
+        $query = Incident::with(['reporter', 'resolver', 'categories']);
+
+        if ($filterDto->search) {
+            $query->where('subject', 'like', '%' . $filterDto->search . '%');
+        }
+
+        $incidents = $query->paginate($filterDto->length);
 
         $transformed = $incidents->getCollection()->map(function ($incident) {
             return [
@@ -97,10 +105,12 @@ class IncidentService
                     'id' => $incident->resolver?->id,
                     'name' => $incident->resolver?->name,
                 ],
-                'category' => [
-                    'id' => $incident->category?->id,
-                    'name' => $incident->category?->name,
-                ],
+                'categories' => $incident->categories->map(function ($category) {
+                    return [
+                        'id' => $category->id,
+                        'name' => $category->name,
+                    ];
+                })->values(),
             ];
         });
 
@@ -109,6 +119,7 @@ class IncidentService
         if ($incidents->total() === 0) {
             abort(404, 'Data not found');
         }
+
         return [
             'current_page' => $incidents->currentPage(),
             'total_data' => $incidents->total(),
@@ -117,11 +128,10 @@ class IncidentService
         ];
     }
 
-
     // Function get with Id
     public static function getId(int $id)
     {
-        $incident = Incident::with(['reporter', 'resolver', 'category'])->findOrFail($id);
+        $incident = Incident::with(['reporter', 'resolver', 'categories'])->findOrFail($id);
 
         return [
             'data' => [
@@ -139,20 +149,22 @@ class IncidentService
                     'id' => $incident->resolver?->id ?? 'null',
                     'name' => $incident->resolver?->name ?? 'null',
                 ],
-                'category' => [
-                    'id' => $incident->category?->id,
-                    'name' => $incident->category?->name,
-                ],
+                'categories' => $incident->categories->map(function ($category) {
+                    return [
+                        'id' => $category->id,
+                        'name' => $category->name,
+                    ];
+                })
             ],
         ];
     }
-
 
     // Function softDelete
     public static function delete(int $id)
     {
         $incident = Incident::findOrFail($id);
         $incident->delete();
+        $incident->categories()->detach();
     }
 }
 

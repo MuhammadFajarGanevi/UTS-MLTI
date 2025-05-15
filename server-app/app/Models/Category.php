@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\Incident;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Category extends Model
 {
@@ -18,9 +19,9 @@ class Category extends Model
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
     ];
-    public function categoryIncident(): HasMany
+    public function incidents(): BelongsToMany
     {
-        return $this->hasMany(Incident::class, 'incidents_category_id');
+        return $this->belongsToMany(Incident::class, 'category_incident_pivots');
     }
 
 }

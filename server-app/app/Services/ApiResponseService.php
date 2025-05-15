@@ -19,6 +19,8 @@ class ApiResponseService
     {
         $this->request = $request;
     }
+
+
     /**
      * Generate a JSON response.
      *

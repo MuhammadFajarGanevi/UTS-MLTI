@@ -9,6 +9,7 @@ use App\DTOs\ApiResponseDto;
 use App\DTOs\CreateIncidentDto;
 use App\DTOs\UpdateIncidentDto;
 use App\Enums\ApiStatusEnum;
+use App\Models\Incident;
 use App\Services\ApiResponseService;
 use App\Services\AuthenticationService;
 use GuzzleHttp\Promise\Create;
@@ -39,7 +40,7 @@ class IncidentController extends Controller
         IncidentService::update($updateIncidentDto, $id);
     }
 
-    // Controller getAll Incident
+    // Controller getAll & Search Incident
     public function get(FilterDto $filterDto)
     {
         $data = IncidentService::getAll($filterDto);

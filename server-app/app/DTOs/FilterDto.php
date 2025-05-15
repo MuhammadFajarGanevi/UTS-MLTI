@@ -12,7 +12,7 @@ class FilterDto extends Data
     public function __construct(
         public ?int $page,
         public int $length,
-        public ?int $search,
+        public ?string $search,
     ) {
     }
 }
