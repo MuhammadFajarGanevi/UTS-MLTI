@@ -6,6 +6,7 @@ enum ApiStatusEnum: int
 {
     case SUCCESS = 200;
     case CREATED = 201;
+    case ACCEPTED = 202;
     case BAD_REQUEST = 400;
     case UNAUTHORIZED = 401;
     case FORBIDDEN = 403;
@@ -19,6 +20,7 @@ enum ApiStatusEnum: int
         return match ($this) {
             self::SUCCESS => "Success! Your request has safely landed back to Earth.",
             self::CREATED => "New entity launched into the cosmos.",
+            self::ACCEPTED => "Request captured by the event horizon - queued for singularity processing",
             self::BAD_REQUEST => "Your request veered off course and couldn't escape Earth's gravity!",
             self::UNAUTHORIZED => "Your credentials don't pass the cosmic gatekeeper!",
             self::FORBIDDEN => "Your request violates the Sacred Timeline and cannot be fulfilled!",

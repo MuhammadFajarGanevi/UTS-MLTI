@@ -16,7 +16,7 @@ class AuthenticationController extends Controller
 
     /**
      * Create a new service instance.
-     * @param \App\Infrastructure\Services\ApiResponseService $response
+     * @param \App\Services\ApiResponseService $response
      */
     public function __construct(ApiResponseService $response)
     {
@@ -48,10 +48,10 @@ class AuthenticationController extends Controller
     }
 
     /**
-    * Refresh the user token.
-    * @param \Illuminate\Http\Request $request
-    * @return \App\DTOs\ApiResponseDto
-    */
+     * Refresh the user token.
+     * @param \Illuminate\Http\Request $request
+     * @return \App\DTOs\ApiResponseDto
+     */
     public function refreshToken(Request $request)
     {
         $token = AuthenticationService::refreshToken();
