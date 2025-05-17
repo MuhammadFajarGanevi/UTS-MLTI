@@ -56,6 +56,15 @@ class IncidentController extends Controller
         );
     }
 
+    // Controller getCategory Incident
+    public function getCategory()
+    {
+        $data = IncidentService::getCategory();
+        return ($this->response)(
+            ApiResponseDto::from(["data" => $data])
+        );
+    }
+
     // Controller delete Incident
     public function delete(int $id)
     {

@@ -11,7 +11,6 @@ class CreateIncidentDto extends Data
         readonly string $subject,
         readonly string $description,
         readonly array $category_id,
-        readonly ?int $resolver_id,
     ) {
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\CategoryIncident;
 use App\Models\Incident;
 use App\DTOs\CreateIncidentDto;
 use App\DTOs\FilterDto;
@@ -153,6 +154,15 @@ class IncidentService
             'total_page' => $incidents->lastPage(),
             'data' => $incidents->items(),
         ];
+    }
+
+
+    // Function get all Category
+    public static function getCategory()
+    {
+        $query = CategoryIncident::all();
+
+        return ['data' => $query];
     }
 
     // Function get with Id
