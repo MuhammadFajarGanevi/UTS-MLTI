@@ -145,12 +145,12 @@ class RequestServices
                 'created_at' => $query->created_at,
 
                 'requester' => [
-                    'id' => $query->requester_id?->id,
-                    'name' => $query->requester_id?->name,
+                    'id' => $query->requester?->id,
+                    'name' => $query->requester?->name,
                 ],
-                'resolver' => [
-                    'id' => $query->resolver?->id ?? 'null',
-                    'name' => $query->resolver?->name ?? 'null',
+                'Person in Control' => [
+                    'id' => $query->personInControl?->id ?? 'null',
+                    'name' => $query->personInControl?->name ?? 'null',
                 ],
                 'categories' => $query->categories->sortBy('id')->values()->map(function ($category) {
                     return [
