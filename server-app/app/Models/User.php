@@ -57,4 +57,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(Incident::class, 'resolver_id');
     }
+    public function personInControl(): HasMany
+    {
+        return $this->hasMany(RequestService::class, 'requester_id');
+    }
 }

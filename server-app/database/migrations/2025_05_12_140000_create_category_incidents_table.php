@@ -10,15 +10,13 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('category_incident_pivots', function (Blueprint $table) {
+        Schema::create('category_incidents', function (Blueprint $table) {
+
             $table->id();
-            $table->foreignId('incident_id')->constrained(
-                'incidents'
-            )->onDelete('cascade');
-            $table->foreignId('category_incident_id')->constrained(
-                'category_incidents'
-            )->onDelete('cascade');
+            $table->string('name');
             $table->timestamps();
+            $table->softDeletes();
+
         });
     }
 
@@ -27,6 +25,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('category_incident_pivots');
+        Schema::dropIfExists('category_incidents');
     }
 };

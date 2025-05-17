@@ -10,7 +10,6 @@ use App\DTOs\ApiResponseDto;
 use App\DTOs\UpdateIncidentDto;
 use App\Enums\ApiStatusEnum;
 use App\Enums\IncidentStatus;
-use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 class IncidentService
 {
@@ -69,13 +68,17 @@ class IncidentService
 
         // Ambil data incident
         $incident = Incident::findOrFail($id); // agar
+        // Jika resolver_id belum ada, baru kita isi
+        if (!$incident->resolver_id && $updateIncidentDto->resolver_id) {
+            $incident->resolver_id = $updateIncidentDto->resolver_id;
+        }
 
-        $incident->update([
-            'resolver' => $updateIncidentDto->resolver_id,
-            'status' => $updateIncidentDto->status,
-            'comment' => $updateIncidentDto->comment,
-            'updated_at' => now(),
-        ]);
+        // Update data lainnya
+        $incident->status = $updateIncidentDto->status;
+        $incident->comment = $updateIncidentDto->comment;
+        $incident->updated_at = now();
+
+        $incident->save();
     }
 
     // Function getAll
@@ -105,7 +108,7 @@ class IncidentService
                     'id' => $incident->resolver?->id,
                     'name' => $incident->resolver?->name,
                 ],
-                'categories' => $incident->categories->map(function ($category) {
+                'categories' => $incident->categories->sortBy('id')->values()->map(function ($category) {
                     return [
                         'id' => $category->id,
                         'name' => $category->name,
@@ -149,7 +152,7 @@ class IncidentService
                     'id' => $incident->resolver?->id ?? 'null',
                     'name' => $incident->resolver?->name ?? 'null',
                 ],
-                'categories' => $incident->categories->map(function ($category) {
+                'categories' => $incident->categories->sortBy('id')->values()->map(function ($category) {
                     return [
                         'id' => $category->id,
                         'name' => $category->name,

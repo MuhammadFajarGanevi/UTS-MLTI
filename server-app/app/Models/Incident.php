@@ -2,7 +2,7 @@
 
 namespace App\Models;
 use App\Models\User;
-use App\Models\Category;
+use App\Models\CategoryIncident;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -45,7 +45,7 @@ class Incident extends Model
 
     public function categories(): BelongsToMany
     {
-        return $this->belongsToMany(Category::class, 'category_incident_pivots');
+        return $this->belongsToMany(CategoryIncident::class, 'category_incident_pivots');
     }
 
 }

@@ -4,16 +4,10 @@ namespace App\Http\Controllers;
 
 use App\DTOs\FilterDto;
 use App\Services\IncidentService;
-use Illuminate\Http\Request;
 use App\DTOs\ApiResponseDto;
 use App\DTOs\CreateIncidentDto;
 use App\DTOs\UpdateIncidentDto;
-use App\Enums\ApiStatusEnum;
-use App\Models\Incident;
 use App\Services\ApiResponseService;
-use App\Services\AuthenticationService;
-use GuzzleHttp\Promise\Create;
-use function Laravel\Prompts\error;
 
 class IncidentController extends Controller
 {

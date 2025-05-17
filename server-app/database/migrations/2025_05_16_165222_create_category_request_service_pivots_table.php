@@ -10,13 +10,13 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('category_incident_pivots', function (Blueprint $table) {
+        Schema::create('category_request_service_pivots', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('incident_id')->constrained(
-                'incidents'
+            $table->foreignId('request_service_id')->constrained(
+                'request_services'
             )->onDelete('cascade');
-            $table->foreignId('category_incident_id')->constrained(
-                'category_incidents'
+            $table->foreignId('category_request_id')->constrained(
+                'category_request_services'
             )->onDelete('cascade');
             $table->timestamps();
         });
@@ -27,6 +27,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('category_incident_pivots');
+        Schema::dropIfExists('category_request_service_pivots');
     }
 };

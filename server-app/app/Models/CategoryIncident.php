@@ -3,13 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\Incident;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class Category extends Model
+class CategoryIncident extends Model
 {
-    protected $table = 'categories';
+    protected $table = 'category_incidents';
 
     protected $fillable = [
         'name',
