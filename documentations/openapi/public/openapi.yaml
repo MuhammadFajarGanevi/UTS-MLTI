@@ -5,9 +5,18 @@ info:
   description: Manage API endpoints.
   version: 0.0.1
 
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+
+security:
+  - BearerAuth: []
+
 servers:
+  - url: https://www.kuliah-oskhar.my.id/api/v1
   - url: http://localhost:8000/api/v1
-  - url: https://laravel-production-35ca.up.railway.app/api/v1
 
 paths:
   # Write your own API endpoints
@@ -72,3 +81,400 @@ paths:
       responses:
         200:
           content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ0ZXN0IiwiaWF0IjoxNjI0MDM0MjU5LCJleHAiOjE2MjQwMzQ5NTl9"
+
+  /auth/logout:
+    # endpoint GET /buku
+    post:
+      tags:
+        - Authentication
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Logout Success"
+  /auth/user:
+    # endpoint GET /buku
+    get:
+      tags:
+        - Authentication
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  name:
+                    type: string
+                    example: Name
+                  email:
+                    type: string
+                    example: email@example.com
+                  is_admin:
+                    type: boolean
+                    example: true
+                  created_at:
+                    type: string
+                    example: 2023-01-01 00:00:00
+                  updated_at:
+                    type: string
+                    example: 2023-01-01 00:00:00
+                  deleted_at:
+                    type: string
+                    example: 2023-01-01 00:00:00
+
+  /incident:
+    # endpoint GET /incidents
+    get:
+      tags:
+        - Incidents
+      parameters:
+        - name: search
+          in: query
+          description: Search by subject
+          required: false
+          schema:
+            type: string
+        - name: length
+          in: query
+          description: Number of items per page
+          required: true
+          schema:
+            type: integer
+            default: 10
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    current_page:
+                      type: integer
+                      example: 1
+                    total_pages:
+                      type: integer
+                      example: 1
+                    total_data:
+                      type: integer
+                      example: 1
+                    data:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            example: 1
+                          subject:
+                            type: string
+                            example: Subject
+                          status:
+                            type: string
+                            example: Submitted
+                          comment:
+                            type: string
+                            example: Comment
+                          created_at:
+                            type: string
+                            example: 2023-01-01 00:00:00
+                          reporter:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                                example: 1
+                              name:
+                                type: string
+                                example: Name
+                          resolver:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                                example: 1
+                              name:
+                                type: string
+                                example: Name
+                          categories:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                  example: 1
+                                name:
+                                  type: string
+                                  example: Name
+    post:
+      tags:
+        - Incidents
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subject:
+                  type: string
+                  example: Subject
+                description:
+                  type: string
+                  example: Description
+                reporter_id:
+                  type: integer
+                  example: 1
+                category_id:
+                  type: array
+                  items:
+                    type: integer
+                    example: 1
+                resolver_id:
+                  type: integer
+                  example: 1
+      responses:
+        201:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  subject:
+                    type: string
+                    example: Subject
+                  description:
+                    type: string
+                    example: Description
+                  reporter_id:
+                    type: integer
+                    example: 1
+                  category_id:
+                    type: array
+                    items:
+                      type: integer
+                      example: 1
+                  resolver_id:
+                    type: integer
+                    example: 1
+                  status:
+                    type: string
+                    example: Submitted
+                  comment:
+                    type: string
+                    example: Comment
+                  created_at:
+                    type: string
+                    example: 2023-01-01 00:00:00
+                  updated_at:
+                    type: string
+                    example: 2023-01-01 00:00:00
+                  deleted_at:
+                    type: string
+                    example: 2023-01-01 00:00:00
+  /incident/{id}:
+    put:
+      tags:
+        - Incidents
+      parameters:
+        - name: id
+          in: path
+          description: Incident ID
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subject:
+                  type: string
+                  example: Subject
+                description:
+                  type: string
+                  example: Description
+                reporter_id:
+                  type: integer
+                  example: 1
+                category_id:
+                  type: array
+                  items:
+                    type: integer
+                    example: 1
+                resolver_id:
+                  type: integer
+                  example: 1
+                status:
+                  type: string
+                  example: Submitted
+                comment:
+                  type: string
+                  example: Comment
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  subject:
+                    type: string
+                    example: Subject
+                  description:
+                    type: string
+                    example: Description
+                  reporter_id:
+                    type: integer
+                    example: 1
+                  category_id:
+                    type: array
+                    items:
+                      type: integer
+                      example: 1
+                  resolver_id:
+                    type: integer
+                    example: 1
+                  status:
+                    type: string
+                    example: Submitted
+                  comment:
+                    type: string
+                    example: Comment
+                  created_at:
+                    type: string
+                    example: 2023-01-01 00:00:00
+                  updated_at:
+                    type: string
+                    example: 2023-01-01 00:00:00
+                  deleted_at:
+                    type: string
+                    example: 2023-01-01 00:00:00
+    get:
+      tags:
+        - Incidents
+      parameters:
+        - name: id
+          in: path
+          description: Incident ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  subject:
+                    type: string
+                    example: Subject
+                  description:
+                    type: string
+                    example: Description
+                  reporter_id:
+                    type: integer
+                    example: 1
+                  category_id:
+                    type: array
+                    items:
+                      type: integer
+                      example: 1
+                  resolver_id:
+                    type: integer
+                    example: 1
+                  status:
+                    type: string
+                    example: Submitted
+                  comment:
+                    type: string
+                    example: Comment
+                  created_at:
+                    type: string
+                    example: 2023-01-01 00:00:00
+                  updated_at:
+                    type: string
+                    example: 2023-01-01 00:00:00
+                  deleted_at:
+                    type: string
+                    example: 2023-01-01 00:00:00
+    delete:
+      tags:
+        - Incidents
+      parameters:
+        - name: id
+          in: path
+          description: Incident ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  subject:
+                    type: string
+                    example: Subject
+                  description:
+                    type: string
+                    example: Description
+                  reporter_id:
+                    type: integer
+                    example: 1
+                  category_id:
+                    type: array
+                    items:
+                      type: integer
+                      example: 1
+                  resolver_id:
+                    type: integer
+                    example: 1
+                  status:
+                    type: string
+                    example: Submitted
+                  comment:
+                    type: string
+                    example: Comment
+                  created_at:
+                    type: string
+                    example: 2023-01-01 00:00:00
+                  updated_at:
+                    type: string
+                    example: 2023-01-01 00:00:00
+                  deleted_at:
+                    type: string
+                    example: 2023-01-01 00:00:00
