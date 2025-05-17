@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 use Database\Seeders\UserSeeder;
 use Database\Seeders\CategoryIncidentSeeder;
 use Database\Seeders\CategoryRequestServiceSeeder;
+use Database\Seeders\CategoryProblemSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -18,6 +19,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             CategoryIncidentSeeder::class,
             CategoryRequestServiceSeeder::class,
+            CategoryProblemSeeder::class,
         ]);
     }
 }
