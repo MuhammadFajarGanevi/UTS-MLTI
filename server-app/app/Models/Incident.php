@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Incident extends Model
 {
 
-    protected $table = 'Incidents';
+    protected $table = 'incidents';
 
     use SoftDeletes;
 
