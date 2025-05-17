@@ -2,14 +2,14 @@
 
 namespace App\Services;
 
-use App\DTOs\Authentication\LoginDto;
-use App\Enums\ApiStatusEnum;
 use App\Models\User;
+use App\DTOs\Authentication\LoginDto;
+use App\DTOs\Authentication\ResetPasswordDto;
+use App\Enums\ApiStatusEnum;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use App\Exceptions\ApiResponseException;
-use App\DTOs\Authentication\ResetPasswordDto;
 
 class AuthenticationService
 {

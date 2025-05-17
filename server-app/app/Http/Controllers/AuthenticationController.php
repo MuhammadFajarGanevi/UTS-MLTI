@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use App\DTOs\Authentication\LoginDto;
 use App\DTOs\Authentication\ResetPasswordDto;
 use App\DTOs\ApiResponseDto;
-use App\Enums\ApiStatusEnum;
 use App\Services\ApiResponseService;
 use App\Services\AuthenticationService;
 

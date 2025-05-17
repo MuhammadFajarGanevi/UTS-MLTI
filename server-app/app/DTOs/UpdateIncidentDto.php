@@ -8,9 +8,8 @@ class UpdateIncidentDto extends Data
 {
     public function __construct(
 
-        public ?int $resolver_id,
-        public readonly string $status,
-        public ?string $comment,
+        readonly ?string $status,
+        readonly ?string $comment,
 
     ) {
     }

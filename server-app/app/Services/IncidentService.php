@@ -10,6 +10,8 @@ use App\DTOs\ApiResponseDto;
 use App\DTOs\UpdateIncidentDto;
 use App\Enums\ApiStatusEnum;
 use App\Enums\IncidentStatus;
+use Illuminate\Support\Facades\Auth;
+use App\Exceptions\ApiResponseException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 class IncidentService
 {
@@ -35,16 +37,20 @@ class IncidentService
     //  Function Post
     public static function create(CreateIncidentDto $createIncidentDto): void
     {
+        $user = Auth::user();
+
+        if (!in_array($user->name, ['User', 'Administrator'])) {
+            throw new ApiResponseException(['You are not authorized'], ApiStatusEnum::UNAUTHORIZED);
+        }
         // validate
-        if (!$createIncidentDto->reporter_id || !$createIncidentDto->category_id) {
+        if (!$createIncidentDto->category_id) {
             throw new UnprocessableEntityHttpException('Error!!! Either reporter or category must be specified');
         }
-
         // Buat incident
         $incident = Incident::create([
             'subject' => $createIncidentDto->subject,
             'description' => $createIncidentDto->description,
-            'reporter_id' => $createIncidentDto->reporter_id,
+            'reporter_id' => $user->id,
             'status' => IncidentStatus::SUBMITTED,
         ]);
 
@@ -56,28 +62,46 @@ class IncidentService
     }
 
     // Function Update with parameter id
-    public static function update(UpdateIncidentDto $updateIncidentDto, int $id)
+    public static function updateStatus(UpdateIncidentDto $updateIncidentDto, int $id)
     {
-
+        $user = Auth::user();
+        if ($user->name !== 'Administrator') {
+            throw new ApiResponseException(['You are not authorized'], ApiStatusEnum::UNAUTHORIZED);
+        }
         // Validasi apakah status ada dalam enum
         $validStatuses = array_column(IncidentStatus::cases(), 'value');
-
         if (!in_array($updateIncidentDto->status, $validStatuses)) {
             throw new UnprocessableEntityHttpException('error entity');
         }
-
         // Ambil data incident
         $incident = Incident::findOrFail($id); // agar
-        // Jika resolver_id belum ada, baru kita isi
-        if (!$incident->resolver_id && $updateIncidentDto->resolver_id) {
-            $incident->resolver_id = $updateIncidentDto->resolver_id;
-        }
 
         // Update data lainnya
         $incident->status = $updateIncidentDto->status;
-        $incident->comment = $updateIncidentDto->comment;
         $incident->updated_at = now();
 
+        $incident->save();
+    }
+
+    // Update Worker Incident
+    public static function updateWorker(UpdateIncidentDto $updateIncidentDto, int $id)
+    {
+        $user = Auth::user();
+        if ($user->name !== 'Worker') {
+            throw new ApiResponseException(['You are not authorized'], ApiStatusEnum::UNAUTHORIZED);
+        }
+        // Validasi apakah status ada dalam enum
+        $validStatuses = array_column(IncidentStatus::cases(), 'value');
+        if (!in_array($updateIncidentDto->status, $validStatuses)) {
+            throw new UnprocessableEntityHttpException('error entity');
+        }
+        // Ambil data incident
+        $incident = Incident::findOrFail($id); // agar
+
+        // Update data lainnya
+        $incident->resolver_id = $user->id;
+        $incident->comment = $updateIncidentDto->comment;
+        $incident->updated_at = now();
         $incident->save();
     }
 
@@ -165,6 +189,11 @@ class IncidentService
     // Function softDelete
     public static function delete(int $id)
     {
+        $user = Auth::user();
+        if ($user->name !== 'Administrator') {
+            throw new ApiResponseException(['ur not authorized'], ApiStatusEnum::UNAUTHORIZED);
+        }
+
         $incident = Incident::findOrFail($id);
         $incident->delete();
         $incident->categories()->detach();

@@ -29,13 +29,17 @@ class IncidentController extends Controller
     }
 
     // Controller update Incident
-    public function update(UpdateIncidentDto $updateIncidentDto, int $id)
+    public function updateStatus(UpdateIncidentDto $updateIncidentDto, int $id)
     {
-        IncidentService::update($updateIncidentDto, $id);
+        IncidentService::updateStatus($updateIncidentDto, $id);
+    }
+    public function updateWorker(UpdateIncidentDto $updateIncidentDto, int $id)
+    {
+        IncidentService::updateWorker($updateIncidentDto, $id);
     }
 
     // Controller getAll & Search Incident
-    public function get(FilterDto $filterDto)
+    public function getAll(FilterDto $filterDto)
     {
         $data = IncidentService::getAll($filterDto);
         return ($this->response)(
