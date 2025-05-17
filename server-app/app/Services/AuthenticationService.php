@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use App\Exceptions\ApiResponseException;
+use App\DTOs\Authentication\ResetPasswordDto;
 
 class AuthenticationService
 {
@@ -32,12 +33,12 @@ class AuthenticationService
 
         // Generate token via Sanctum
         $token = $user->createToken(
-                'personal_access_tokens',
-                ['*'],
-                $expiresAt = Carbon::now()->addMinutes(
-                    config("sanctum." . ($loginDto->is_remember_me ? "long_lived_expiration" : "short_lived_expiration"))
-                )
-            )->plainTextToken;
+            'personal_access_tokens',
+            ['*'],
+            $expiresAt = Carbon::now()->addMinutes(
+                config("sanctum." . ($loginDto->is_remember_me ? "long_lived_expiration" : "short_lived_expiration"))
+            )
+        )->plainTextToken;
 
         return [
             'token' => $token,
@@ -52,7 +53,7 @@ class AuthenticationService
     /**
      * Reset the user password using the token.
      *
-     * @param ResetPasswordDto $resetPasswordDto
+     * @param \App\DTOs\Authentication\ResetPasswordDto $resetPasswordDto
      */
     public static function resetPassword(ResetPasswordDto $resetPasswordDto)
     {
@@ -78,7 +79,7 @@ class AuthenticationService
 
         $user->password = Hash::make($resetPasswordDto->newPassword);
         $user->save();
-   }
+    }
 
     /**
      * Refresh the user token.
@@ -105,5 +106,30 @@ class AuthenticationService
             ],
             'expires_at' => $expiresAt->toDateTimeString()
         ];
+    }
+
+    public static function logout()
+    {
+        Auth::logout();
+    }
+
+    public static function getUser()
+    {
+        $user = Auth::user();
+
+        return [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+        ];
+    }
+
+    public static function start()
+    {
+        User::create([
+            'name' => "admin",
+            'email' => "admin@example.com",
+            'password' => Hash::make('123456'),
+        ]);
     }
 }

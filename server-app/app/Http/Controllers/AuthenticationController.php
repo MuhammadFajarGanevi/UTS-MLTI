@@ -58,4 +58,36 @@ class AuthenticationController extends Controller
 
         return ($this->response)(ApiResponseDto::from($token));
     }
+
+    /**
+     * Logout the user.
+     * @param \Illuminate\Http\Request $request
+     * @return \App\DTOs\ApiResponseDto
+     */
+    public function logout(Request $request)
+    {
+        AuthenticationService::logout();
+    }
+
+    /**
+     * Get the user.
+     * @param \Illuminate\Http\Request $request
+     * @return \App\DTOs\ApiResponseDto
+     */
+    public function getUser(Request $request)
+    {
+        $user = AuthenticationService::getUser();
+
+        return ($this->response)(ApiResponseDto::from(["data" => $user]));
+    }
+
+    /**
+     * Start the authentication.
+     * @param \Illuminate\Http\Request $request
+     * @return \App\DTOs\ApiResponseDto
+     */
+    public function start(Request $request)
+    {
+        AuthenticationService::start();
+    }
 }
