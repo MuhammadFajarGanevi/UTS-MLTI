@@ -7,6 +7,7 @@ info:
 
 servers:
   - url: http://localhost:8000/api/v1
+  - url: https://laravel-production-35ca.up.railway.app/api/v1
 
 paths:
   # Write your own API endpoints
