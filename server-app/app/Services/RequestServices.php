@@ -102,11 +102,8 @@ class RequestServices
             throw new ApiResponseException(['You are not authorized'], ApiStatusEnum::UNAUTHORIZED);
         }
         // Validasi apakah status ada dalam enum
-        $validStatuses = array_column(RequestServiceStatusEnum::cases(), 'value');
 
-        if (!in_array($updateRequestServiceDto->status, $validStatuses)) {
-            throw new UnprocessableEntityHttpException('error entity');
-        }
+
 
         // Ambil data incident
         $RequestService = RequestService::findOrFail($id); // agar
@@ -134,6 +131,8 @@ class RequestServices
             return [
                 'id' => $req->id,
                 'subject' => $req->subject,
+                'description' => $req->description,
+
                 'status' => $req->status,
                 'comment' => $req->comment,
                 'created_at' => $req->created_at,
@@ -142,7 +141,7 @@ class RequestServices
                     'id' => $req->requester?->id,
                     'name' => $req->requester?->name,
                 ],
-                'pic' => [
+                'personInControl' => [
                     'id' => $req->pic?->id,
                     'name' => $req->pic?->name,
                 ],
@@ -178,6 +177,8 @@ class RequestServices
             'data' => [
                 'id' => $query->id,
                 'subject' => $query->subject,
+                'description' => $query->description,
+
                 'status' => $query->status,
                 'comment' => $query->comment,
                 'created_at' => $query->created_at,
@@ -186,7 +187,7 @@ class RequestServices
                     'id' => $query->requester?->id,
                     'name' => $query->requester?->name,
                 ],
-                'Person in Control' => [
+                'personInControl' => [
                     'id' => $query->personInControl?->id ?? 'null',
                     'name' => $query->personInControl?->name ?? 'null',
                 ],

@@ -91,11 +91,7 @@ class IncidentService
         if ($user->name !== 'Worker') {
             throw new ApiResponseException(['You are not authorized'], ApiStatusEnum::UNAUTHORIZED);
         }
-        // Validasi apakah status ada dalam enum
-        $validStatuses = array_column(IncidentStatus::cases(), 'value');
-        if (!in_array($updateIncidentDto->status, $validStatuses)) {
-            throw new UnprocessableEntityHttpException('error entity');
-        }
+
         // Ambil data incident
         $incident = Incident::findOrFail($id); // agar
 
@@ -121,6 +117,7 @@ class IncidentService
             return [
                 'id' => $incident->id,
                 'subject' => $incident->subject,
+                'description' => $incident->description,
                 'status' => $incident->status,
                 'comment' => $incident->comment,
                 'created_at' => $incident->created_at,
@@ -174,6 +171,7 @@ class IncidentService
             'data' => [
                 'id' => $incident->id,
                 'subject' => $incident->subject,
+                'description' => $incident->description,
                 'status' => $incident->status,
                 'comment' => $incident->comment,
                 'created_at' => $incident->created_at,
