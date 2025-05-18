@@ -468,8 +468,6 @@ paths:
         A successful GET response will have a `200 OK` status, and should
         include some kind of response body - for example, HTML web content or
         JSON data.
-      security:
-        - bearerAuth: []
       responses:
         '200':
           description: Successful response
@@ -496,8 +494,6 @@ paths:
                 description: Main production server is not responding to ping
                 category_id:
                   - 1
-      security:
-        - bearerAuth: []
       responses:
         '200':
           description: Successful response
@@ -529,8 +525,6 @@ paths:
               type: object
               example:
                 status: in_progress
-      security:
-        - bearerAuth: []
       responses:
         '200':
           description: Successful response
@@ -556,8 +550,6 @@ paths:
               type: object
               example:
                 comment: Saya yang mengerjakan ini
-      security:
-        - bearerAuth: []
       responses:
         '200':
           description: Successful response
@@ -574,8 +566,6 @@ paths:
         being updated by including an identifier in the URL (eg. `id=1`).
         A successful DELETE request typically returns a `200 OK`, `202
         Accepted`, or `204 No Content` response code.
-      security:
-        - bearerAuth: []
       responses:
         '200':
           description: Successful response
