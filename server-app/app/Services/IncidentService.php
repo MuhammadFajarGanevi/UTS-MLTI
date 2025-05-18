@@ -117,6 +117,7 @@ class IncidentService
             return [
                 'id' => $incident->id,
                 'subject' => $incident->subject,
+                'description' => $incident->description,
                 'status' => $incident->status,
                 'comment' => $incident->comment,
                 'created_at' => $incident->created_at,
@@ -170,6 +171,7 @@ class IncidentService
             'data' => [
                 'id' => $incident->id,
                 'subject' => $incident->subject,
+                'description' => $incident->description,
                 'status' => $incident->status,
                 'comment' => $incident->comment,
                 'created_at' => $incident->created_at,

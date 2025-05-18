@@ -131,6 +131,8 @@ class RequestServices
             return [
                 'id' => $req->id,
                 'subject' => $req->subject,
+                'description' => $req->description,
+
                 'status' => $req->status,
                 'comment' => $req->comment,
                 'created_at' => $req->created_at,
@@ -175,6 +177,8 @@ class RequestServices
             'data' => [
                 'id' => $query->id,
                 'subject' => $query->subject,
+                'description' => $query->description,
+
                 'status' => $query->status,
                 'comment' => $query->comment,
                 'created_at' => $query->created_at,

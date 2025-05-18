@@ -96,8 +96,6 @@ class ProblemService
             throw new ApiResponseException(['You are not authorized'], ApiStatusEnum::UNAUTHORIZED);
 
         }
-        // Validasi apakah status ada dalam enum
-
 
         // Ambil data incident
         $query = Problem::with(['personInControl'])->findOrFail($id); // agar
@@ -130,6 +128,8 @@ class ProblemService
                 'id' => $problem->id,
                 'subject' => $problem->subject,
                 'status' => $problem->status,
+                'description' => $problem->description,
+
                 'comment' => $problem->comment,
                 'created_at' => $problem->created_at,
 
@@ -174,6 +174,8 @@ class ProblemService
                 'id' => $query->id,
                 'subject' => $query->subject,
                 'status' => $query->status,
+                'description' => $query->description,
+
                 'comment' => $query->comment,
                 'created_at' => $query->created_at,
 
