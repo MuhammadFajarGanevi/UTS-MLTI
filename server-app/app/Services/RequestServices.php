@@ -102,11 +102,8 @@ class RequestServices
             throw new ApiResponseException(['You are not authorized'], ApiStatusEnum::UNAUTHORIZED);
         }
         // Validasi apakah status ada dalam enum
-        $validStatuses = array_column(RequestServiceStatusEnum::cases(), 'value');
 
-        if (!in_array($updateRequestServiceDto->status, $validStatuses)) {
-            throw new UnprocessableEntityHttpException('error entity');
-        }
+
 
         // Ambil data incident
         $RequestService = RequestService::findOrFail($id); // agar

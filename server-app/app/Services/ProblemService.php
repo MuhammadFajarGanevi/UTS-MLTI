@@ -97,7 +97,6 @@ class ProblemService
 
         }
         // Validasi apakah status ada dalam enum
-        $validStatuses = array_column(ProblemStatusEnum::cases(), 'value');
 
 
         // Ambil data incident
