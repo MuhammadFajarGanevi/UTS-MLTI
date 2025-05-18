@@ -141,6 +141,8 @@ paths:
   /incident:
     get:
       summary: Get all incidents
+      tags:
+        - incident
       parameters:
         - in: query
           name: length
@@ -214,6 +216,8 @@ paths:
                               type: string
                               example: Name
     post:
+      tags:
+        - incident
       summary: Create a new incident
       requestBody:
         required: true
@@ -238,6 +242,8 @@ paths:
 
   /incident/category:
     get:
+      tags:
+        - incident
       summary: Get incident categories
       responses:
         '200':
@@ -256,6 +262,8 @@ paths:
 
   /incident/{id}:
     get:
+      tags:
+      - incident
       summary: Get incident by ID
       parameters:
         - in: path
@@ -330,6 +338,8 @@ paths:
                               type: string
                               example: Name
     delete:
+      tags:
+        - incident
       summary: Delete incident by ID
       parameters:
         - in: path
@@ -343,6 +353,8 @@ paths:
 
   /incident/status/{id}:
     put:
+      tags:
+        - incident
       summary: Update incident status
       parameters:
         - in: path
@@ -367,6 +379,8 @@ paths:
 
   /incident/worker/{id}:
     put:
+      tags:
+        - incident
       summary: Update incident worker comment
       parameters:
         - in: path
@@ -388,5 +402,182 @@ paths:
       responses:
         '200':
           description: Worker comment updated
-
-
+  /request-service:
+    get:
+      tags:
+        - request-service
+      summary: Get data
+      description: >-
+        This is a GET request and it is used to "get" data from an endpoint.
+        There is no request body for a GET request, but you can use query
+        parameters to help specify the resource you want data on (e.g., in this
+        request, we have `id=1`).
+        A successful GET response will have a `200 OK` status, and should
+        include some kind of response body - for example, HTML web content or
+        JSON data.
+      parameters:
+        - name: length
+          in: query
+          schema:
+            type: integer
+          example: '5'
+        - name: search
+          in: query
+          schema:
+            type: string
+          example: 'search'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /request-service/{id}:
+    get:
+      tags:
+        - request-service
+      summary: Get data By Id
+      description: >-
+        This is a GET request and it is used to "get" data from an endpoint.
+        There is no request body for a GET request, but you can use query
+        parameters to help specify the resource you want data on (e.g., in this
+        request, we have `id=1`).
+        A successful GET response will have a `200 OK` status, and should
+        include some kind of response body - for example, HTML web content or
+        JSON data.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /request-service/category:
+    get:
+      tags:
+        - request-service
+      summary: Get Category
+      description: >-
+        This is a GET request and it is used to "get" data from an endpoint.
+        There is no request body for a GET request, but you can use query
+        parameters to help specify the resource you want data on (e.g., in this
+        request, we have `id=1`).
+        A successful GET response will have a `200 OK` status, and should
+        include some kind of response body - for example, HTML web content or
+        JSON data.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /request-service/:
+    post:
+      tags:
+        - request-service
+      summary: Post data
+      description: >-
+        This is a POST request, submitting data to an API via the request body.
+        This request submits JSON data, and the data is reflected in the
+        response.
+        A successful POST request typically returns a `200 OK` or `201 Created`
+        response code.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                subject: Nak minta uang
+                description: Main production server is not responding to ping
+                category_id:
+                  - 1
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /request-service/status/{id}:
+    put:
+      tags:
+        - request-service
+      summary: Update data status
+      description: >-
+        This is a PUT request and it is used to overwrite an existing piece of
+        data. For instance, after you create an entity with a POST request, you
+        may want to modify that later. You can do that using a PUT request. You
+        typically identify the entity being updated by including an identifier
+        in the URL (eg. `id=1`).
+        A successful PUT request typically returns a `200 OK`, `201 Created`, or
+        `204 No Content` response code.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                status: in_progress
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /request-service/worker/3:
+    put:
+      tags:
+        - request-service
+      summary: Update data worker
+      description: >-
+        This is a PUT request and it is used to overwrite an existing piece of
+        data. For instance, after you create an entity with a POST request, you
+        may want to modify that later. You can do that using a PUT request. You
+        typically identify the entity being updated by including an identifier
+        in the URL (eg. `id=1`).
+        A successful PUT request typically returns a `200 OK`, `201 Created`, or
+        `204 No Content` response code.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                comment: Saya yang mengerjakan ini
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /request-service/3:
+    delete:
+      tags:
+        - request-service
+      summary: Delete data
+      description: >-
+        This is a DELETE request, and it is used to delete data that was
+        previously created via a POST request. You typically identify the entity
+        being updated by including an identifier in the URL (eg. `id=1`).
+        A successful DELETE request typically returns a `200 OK`, `202
+        Accepted`, or `204 No Content` response code.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
