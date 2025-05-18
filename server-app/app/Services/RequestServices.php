@@ -141,7 +141,7 @@ class RequestServices
                     'id' => $req->requester?->id,
                     'name' => $req->requester?->name,
                 ],
-                'pic' => [
+                'personInControl' => [
                     'id' => $req->pic?->id,
                     'name' => $req->pic?->name,
                 ],
@@ -187,7 +187,7 @@ class RequestServices
                     'id' => $query->requester?->id,
                     'name' => $query->requester?->name,
                 ],
-                'Person in Control' => [
+                'personInControl' => [
                     'id' => $query->personInControl?->id ?? 'null',
                     'name' => $query->personInControl?->name ?? 'null',
                 ],
