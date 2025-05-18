@@ -60,9 +60,8 @@ class IncidentController extends Controller
     public function getCategory()
     {
         $data = IncidentService::getCategory();
-        return ($this->response)(
-            ApiResponseDto::from(["data" => $data])
-        );
+
+        return ($this->response)(ApiResponseDto::from($data));
     }
 
     // Controller delete Incident
