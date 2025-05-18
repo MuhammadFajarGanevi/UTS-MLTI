@@ -139,9 +139,6 @@ paths:
                     example: 2023-01-01 00:00:00
 
   /incident:
-    # endpoint GET /incidents
-paths:
-  /incident:
     get:
       summary: Get all incidents
       parameters:
@@ -256,7 +253,7 @@ paths:
               name:
                type: string
                example: Error machine
-             
+
   /incident/{id}:
     get:
       summary: Get incident by ID
@@ -391,5 +388,5 @@ paths:
       responses:
         '200':
           description: Worker comment updated
-                   
-    
+
+
