@@ -531,7 +531,7 @@ paths:
           description: Successful response
           content:
             application/json: {}
-  /request-service/worker/3:
+  /request-service/worker/{id}:
     put:
       tags:
         - request-service
@@ -544,6 +544,12 @@ paths:
         in the URL (eg. `id=1`).
         A successful PUT request typically returns a `200 OK`, `201 Created`, or
         `204 No Content` response code.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
       requestBody:
         content:
           application/json:
@@ -556,7 +562,7 @@ paths:
           description: Successful response
           content:
             application/json: {}
-  /request-service/3:
+  /request-service/{id}:
     delete:
       tags:
         - request-service
@@ -567,6 +573,12 @@ paths:
         being updated by including an identifier in the URL (eg. `id=1`).
         A successful DELETE request typically returns a `200 OK`, `202
         Accepted`, or `204 No Content` response code.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
       responses:
         '200':
           description: Successful response
@@ -576,7 +588,7 @@ paths:
   /problem:
     get:
       tags:
-        - default
+        - Problem
       summary: Get data
       description: >-
         This is a GET request and it is used to "get" data from an endpoint.
@@ -586,8 +598,6 @@ paths:
         A successful GET response will have a `200 OK` status, and should
         include some kind of response body - for example, HTML web content or
         JSON data.
-      security:
-        - bearerAuth: []
       parameters:
         - name: length
           in: query
@@ -601,7 +611,7 @@ paths:
             application/json: {}
     post:
       tags:
-        - default
+        - Problem
       summary: Post data
       description: >-
         This is a POST request, submitting data to an API via the request body.
@@ -619,17 +629,15 @@ paths:
                 description: Main production server is not responding to ping
                 category_id:
                   - 1
-      security:
-        - bearerAuth: []
       responses:
         '200':
           description: Successful response
           content:
             application/json: {}
-  /problem/3:
+  /problem/{id}:
     get:
       tags:
-        - default
+        - Problem
       summary: Get data By Id
       description: >-
         This is a GET request and it is used to "get" data from an endpoint.
@@ -639,8 +647,12 @@ paths:
         A successful GET response will have a `200 OK` status, and should
         include some kind of response body - for example, HTML web content or
         JSON data.
-      security:
-        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
       responses:
         '200':
           description: Successful response
@@ -648,7 +660,7 @@ paths:
             application/json: {}
     delete:
       tags:
-        - default
+        - Problem
       summary: Delete data
       description: >-
         This is a DELETE request, and it is used to delete data that was
@@ -656,17 +668,15 @@ paths:
         being updated by including an identifier in the URL (eg. `id=1`).
         A successful DELETE request typically returns a `200 OK`, `202
         Accepted`, or `204 No Content` response code.
-      security:
-        - bearerAuth: []
       responses:
         '200':
           description: Successful response
           content:
             application/json: {}
-  /problem/status/3:
+  /problem/status/{id}:
     put:
       tags:
-        - default
+        - Problem
       summary: Update data status
       description: >-
         This is a PUT request and it is used to overwrite an existing piece of
@@ -676,6 +686,12 @@ paths:
         in the URL (eg. `id=1`).
         A successful PUT request typically returns a `200 OK`, `201 Created`, or
         `204 No Content` response code.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
       requestBody:
         content:
           application/json:
@@ -683,17 +699,15 @@ paths:
               type: object
               example:
                 status: closed
-      security:
-        - bearerAuth: []
       responses:
         '200':
           description: Successful response
           content:
             application/json: {}
-  /problem/worker/3:
+  /problem/worker/{id}:
     put:
       tags:
-        - default
+        - Problem
       summary: Update data worker
       description: >-
         This is a PUT request and it is used to overwrite an existing piece of
@@ -703,6 +717,12 @@ paths:
         in the URL (eg. `id=1`).
         A successful PUT request typically returns a `200 OK`, `201 Created`, or
         `204 No Content` response code.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
       requestBody:
         content:
           application/json:
@@ -710,8 +730,6 @@ paths:
               type: object
               example:
                 comment: Saya yang mengerjakan ini
-      security:
-        - bearerAuth: []
       responses:
         '200':
           description: Successful response
