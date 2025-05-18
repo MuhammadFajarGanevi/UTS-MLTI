@@ -84,8 +84,12 @@ class RequestServices
         $RequestService = RequestService::findOrFail($id); // agar
         // Jika resolver_id belum ada, baru kita isi}
 
+
+
+
         // Update data lainnya
         $RequestService->status = $updateRequestServiceDto->status;
+
         $RequestService->updated_at = now();
         $RequestService->save();
     }
@@ -216,4 +220,3 @@ class RequestServices
         $query->categories()->detach();
     }
 }
-
