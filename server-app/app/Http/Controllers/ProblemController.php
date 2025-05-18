@@ -29,10 +29,15 @@ class ProblemController extends Controller
         ProblemService::create($createProblemDto);
     }
 
-    // Controller update Request Service
-    public function update(UpdateProblemDto $updateProblemDto, int $id)
+    // Controller update Status Problem
+    public function updateStatus(UpdateProblemDto $updateProblemDto, int $id)
     {
-        ProblemService::update($updateProblemDto, $id);
+        ProblemService::updateStatus($updateProblemDto, $id);
+    }
+    // Controller update Request Service
+    public function updateWorker(UpdateProblemDto $updateProblemDto, int $id)
+    {
+        ProblemService::updateWorker($updateProblemDto, $id);
     }
 
     // Controller getAll & Search Request Service
@@ -42,6 +47,14 @@ class ProblemController extends Controller
         return ($this->response)(
             ApiResponseDto::from(["data" => $data])
         );
+    }
+
+    // Get Category
+    public function getCategory()
+    {
+        $data = ProblemService::getCategory();
+
+        return ($this->response)(ApiResponseDto::from($data));
     }
 
     // Controller getId Request Service

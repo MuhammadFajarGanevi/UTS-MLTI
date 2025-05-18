@@ -157,7 +157,7 @@ class IncidentService
     }
 
 
-    // Function get all Category
+    // Function get all Categoryy
     public static function getCategory()
     {
         $query = CategoryIncident::all();

@@ -30,11 +30,15 @@ class RequestServiceController extends Controller
     }
 
     // Controller update Request Service
-    public function update(UpdateRequestServiceDto $updateRequestServiceDto, int $id)
+    public function updateStatus(UpdateRequestServiceDto $updateRequestServiceDto, int $id)
     {
-        RequestServices::update($updateRequestServiceDto, $id);
+        RequestServices::updateStatus($updateRequestServiceDto, $id);
     }
 
+    public function updateWorker(UpdateRequestServiceDto $updateRequestServiceDto, int $id)
+    {
+        RequestServices::updateWorker($updateRequestServiceDto, $id);
+    }
     // Controller getAll & Search Request Service
     public function get(FilterDto $filterDto)
     {
@@ -51,6 +55,14 @@ class RequestServiceController extends Controller
         return ($this->response)(
             ApiResponseDto::from(["data" => $data])
         );
+    }
+
+    // Get Category
+    public function getCategory()
+    {
+        $data = RequestServices::getCategory();
+
+        return ($this->response)(ApiResponseDto::from($data));
     }
 
     // Controller delete Request Service

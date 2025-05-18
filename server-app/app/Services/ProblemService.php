@@ -11,7 +11,11 @@ use App\Enums\ApiStatusEnum;
 use App\Enums\ProblemStatusEnum;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
+use App\Exceptions\ApiResponseException;
+use App\Models\CategoryProblem;
+
 class ProblemService
 {
     protected Request $request;
@@ -36,8 +40,13 @@ class ProblemService
     //  Function Post
     public static function create(CreateProblemDto $createProblemDto): void
     {
+        $user = Auth::user();
         // validate
-        if (!$createProblemDto->reporter_id || !$createProblemDto->category_id) {
+        if (!in_array($user->name, ['User', 'Administrator'])) {
+            throw new ApiResponseException(['You are not authorized'], ApiStatusEnum::UNAUTHORIZED);
+
+        }
+        if (!$createProblemDto->category_id) {
             throw new UnprocessableEntityHttpException('Error!!! Either reporter or category must be specified');
         }
 
@@ -45,7 +54,7 @@ class ProblemService
         $Problem = Problem::create([
             'subject' => $createProblemDto->subject,
             'description' => $createProblemDto->description,
-            'reporter_id' => $createProblemDto->reporter_id,
+            'reporter_id' => $user->id,
             'status' => ProblemStatusEnum::OPENED,
         ]);
 
@@ -56,10 +65,14 @@ class ProblemService
         ]);
     }
 
-    // Function Update with parameter id
-    public static function update(UpdateProblemDto $updateProblemDto, int $id)
+    // Function Update Status with parameter id
+    public static function updateStatus(UpdateProblemDto $updateProblemDto, int $id)
     {
+        $user = Auth::user();
+        if ($user->name !== 'Administrator') {
+            throw new ApiResponseException(['You are not authorized'], ApiStatusEnum::UNAUTHORIZED);
 
+        }
         // Validasi apakah status ada dalam enum
         $validStatuses = array_column(ProblemStatusEnum::cases(), 'value');
 
@@ -69,14 +82,34 @@ class ProblemService
 
         // Ambil data incident
         $query = Problem::findOrFail($id); // agar
-        // Jika resolver_id belum ada, baru kita isi
-        if (!$query->pic_id && $updateProblemDto->pic_id) {
-            $query->pic_id = $updateProblemDto->pic_id;
-        }
 
         // Update data lainnya
         $query->status = $updateProblemDto->status;
+        $query->updated_at = now();
+
+        $query->save();
+    }
+    public static function updateWorker(UpdateProblemDto $updateProblemDto, int $id)
+    {
+        $user = Auth::user();
+        if ($user->name !== 'Worker') {
+            throw new ApiResponseException(['You are not authorized'], ApiStatusEnum::UNAUTHORIZED);
+
+        }
+        // Validasi apakah status ada dalam enum
+        $validStatuses = array_column(ProblemStatusEnum::cases(), 'value');
+
+
+        // Ambil data incident
+        $query = Problem::with(['personInControl'])->findOrFail($id); // agar
+
+        if ($query->pic_id !== null && $query->pic_id !== $user->id) {
+            throw new ApiResponseException(['You are not authorized to modify this incident.'], ApiStatusEnum::UNAUTHORIZED);
+        }
+
+        // Update data lainnya
         $query->comment = $updateProblemDto->comment;
+        $query->pic_id = $user->id;
         $query->updated_at = now();
 
         $query->save();
@@ -163,9 +196,21 @@ class ProblemService
         ];
     }
 
+    // Function Get Category
+    public static function getCategory()
+    {
+        $query = CategoryProblem::all();
+        return ['data' => $query];
+    }
     // Function softDelete
     public static function delete(int $id)
     {
+        // validate
+        $user = Auth::user();
+        if ($user->name !== 'Administrator') {
+            throw new ApiResponseException(['You are not authorized'], ApiStatusEnum::UNAUTHORIZED);
+        }
+
         $query = Problem::findOrFail($id);
         $query->delete();
         $query->categories()->detach();

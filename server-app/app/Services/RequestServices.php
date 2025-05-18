@@ -11,6 +11,10 @@ use App\Enums\ApiStatusEnum;
 use App\Enums\RequestServiceStatusEnum;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
+use Illuminate\Support\Facades\Auth;
+use App\Exceptions\ApiResponseException;
+use App\Models\CategoryRequestService;
+
 class RequestServices
 {
     protected Request $request;
@@ -35,8 +39,14 @@ class RequestServices
     //  Function Post
     public static function create(CreateRequestServiceDto $createRequestServiceDto): void
     {
+
+        $user = Auth::user();
+        if (!in_array($user->name, ['User', 'Administrator'])) {
+            throw new ApiResponseException(['You are not authorized'], ApiStatusEnum::UNAUTHORIZED);
+        }
+
         // validate
-        if (!$createRequestServiceDto->requester_id || !$createRequestServiceDto->category_id) {
+        if (!$createRequestServiceDto->category_id) {
             throw new UnprocessableEntityHttpException('Error!!! Either reporter or category must be specified');
         }
 
@@ -44,7 +54,7 @@ class RequestServices
         $RequestService = RequestService::create([
             'subject' => $createRequestServiceDto->subject,
             'description' => $createRequestServiceDto->description,
-            'requester_id' => $createRequestServiceDto->requester_id,
+            'requester_id' => $user->id,
             'status' => RequestServiceStatusEnum::SUBMITTED,
         ]);
 
@@ -56,9 +66,13 @@ class RequestServices
     }
 
     // Function Update with parameter id
-    public static function update(UpdateRequestServiceDto $updateRequestServiceDto, int $id)
+    public static function updateStatus(UpdateRequestServiceDto $updateRequestServiceDto, int $id)
     {
 
+        $user = Auth::user();
+        if ($user->name !== 'Administrator') {
+            throw new ApiResponseException(['You are not authorized'], ApiStatusEnum::UNAUTHORIZED);
+        }
         // Validasi apakah status ada dalam enum
         $validStatuses = array_column(RequestServiceStatusEnum::cases(), 'value');
 
@@ -68,16 +82,36 @@ class RequestServices
 
         // Ambil data incident
         $RequestService = RequestService::findOrFail($id); // agar
-        // Jika resolver_id belum ada, baru kita isi
-        if (!$RequestService->pic_id && $updateRequestServiceDto->pic_id) {
-            $RequestService->pic_id = $updateRequestServiceDto->pic_id;
-        }
+        // Jika resolver_id belum ada, baru kita isi}
 
         // Update data lainnya
         $RequestService->status = $updateRequestServiceDto->status;
-        $RequestService->comment = $updateRequestServiceDto->comment;
         $RequestService->updated_at = now();
+        $RequestService->save();
+    }
 
+    public static function updateWorker(UpdateRequestServiceDto $updateRequestServiceDto, int $id)
+    {
+
+        $user = Auth::user();
+        if ($user->name !== 'Worker') {
+            throw new ApiResponseException(['You are not authorized'], ApiStatusEnum::UNAUTHORIZED);
+        }
+        // Validasi apakah status ada dalam enum
+        $validStatuses = array_column(RequestServiceStatusEnum::cases(), 'value');
+
+        if (!in_array($updateRequestServiceDto->status, $validStatuses)) {
+            throw new UnprocessableEntityHttpException('error entity');
+        }
+
+        // Ambil data incident
+        $RequestService = RequestService::findOrFail($id); // agar
+        // Jika resolver_id belum ada, baru kita isi}
+
+        // Update data lainnya
+        $RequestService->comment = $updateRequestServiceDto->comment;
+        $RequestService->pic_id = $user->id;
+        $RequestService->updated_at = now();
         $RequestService->save();
     }
 
@@ -162,9 +196,21 @@ class RequestServices
         ];
     }
 
+    // Function get all Categoryy
+    public static function getCategory()
+    {
+        $query = CategoryRequestService::all();
+
+        return ['data' => $query];
+    }
+
     // Function softDelete
     public static function delete(int $id)
     {
+        $user = Auth::user();
+        if ($user->name !== 'Administrator') {
+            throw new ApiResponseException(['You are not authorized'], ApiStatusEnum::UNAUTHORIZED);
+        }
         $query = RequestService::findOrFail($id);
         $query->delete();
         $query->categories()->detach();
