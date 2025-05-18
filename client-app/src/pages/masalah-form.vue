@@ -42,37 +42,13 @@
         <label class="mb-1 d-block font-weight-medium">Kategori Insiden</label>
         <VSelect
           v-model="form.category_id"
+          :items="categories"
           label="Kategori kesalahan"
-          :items="[
-            { label: 'App Not Responding', value: 1 },
-            { label: 'Slow Network', value: 2 },
-            { label: 'Password Reset Request', value: 3 },
-            { label: 'Data Entry Error', value: 4 },
-            { label: 'Feature Request', value: 5 },
-          ]"
           item-title="label"
           item-value="value"
           required
         />
       </div>
-
-      <!-- Tanggal -->
-      <!--
-        <div
-        class="mb-4"
-        style="max-inline-size: 600px;"
-        >
-        <label class="mb-1 d-block font-weight-medium">Tanggal</label>
-        <VTextField
-        v-model="form.tanggal"
-        type="date"
-        label="Pilih tanggal"
-        variant="outlined"
-        hide-details
-        required
-        />
-        </div> 
-      -->
 
       <!-- Kode Etik -->
       <div
@@ -143,7 +119,7 @@
 
 <script setup>
 import axios from 'axios'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -152,7 +128,7 @@ const router = useRouter()
 const form = ref({
   subject: '',
   description: '',
-  category_id: [],
+  category_id: null, // gunakan null, bukan array
   setujuKodeEtik: false,
 })
 
@@ -163,13 +139,42 @@ const kodeEtikText = `Contributor Covenant Code of Conduct
 📝 Introduction
 Kami berkomitmen untuk menciptakan lingkungan yang terbuka dan ramah...
 
-... (potong jika terlalu panjang, bisa isi ulang saat dibutuhkan)
+...(potong jika terlalu panjang, bisa isi ulang saat dibutuhkan)
 `
 
 const setujuiKodeEtik = () => {
   form.value.setujuKodeEtik = true
   dialogKodeEtik.value = false
 }
+
+// List kategori dari API
+const categories = ref([])
+
+// Ambil kategori saat komponen dimount
+onMounted(async () => {
+  try {
+    const token = localStorage.getItem('token')
+
+    const response = await axios.get('https://kuliah-oskhar.my.id/api/v1/problem/category', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+
+    console.log(response)
+
+    if (response.data[0].status) {
+      categories.value = response.data[0].data.map(item => ({
+        label: item.name,
+        value: item.id,
+      }))
+    } else {
+      console.warn('Gagal memuat kategori:', response.data.message)
+    }
+  } catch (error) {
+    console.error('Gagal mengambil kategori:', error)
+  }
+})
 
 // Fungsi mengirim laporan
 const kirimLaporan = async () => {
@@ -179,7 +184,7 @@ const kirimLaporan = async () => {
     const isFormKosong =
       !form.value.subject ||
       !form.value.description ||
-      form.value.category_id.length === 0 ||
+      !form.value.category_id || // cukup cek null
       !form.value.setujuKodeEtik
 
     if (isFormKosong) {
@@ -194,18 +199,16 @@ const kirimLaporan = async () => {
       description: form.value.description,
       reporter_id: 1,
       resolver_id: null,
-
-      // category_id: Array.isArray(form.value.categories)
-      //   ? form.value.categories
-      //   : [form.value.categories],
-      category_id: [form.value.category_id],
+      category_id: [form.value.category_id], // tetap kirim dalam bentuk array
     }
 
-    console.log('Cek isi form sebelum dikirim:', dataToSend)
+    console.log('Data yang dikirim:', dataToSend)
 
     const token = localStorage.getItem('token')
 
-    const response = await axios.post('https://www.kuliah-oskhar.my.id/api/v1/incident', dataToSend,
+    const response = await axios.post(
+      'https://www.kuliah-oskhar.my.id/api/v1/problem',
+      dataToSend,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -219,7 +222,7 @@ const kirimLaporan = async () => {
     form.value = {
       subject: '',
       description: '',
-      category_id: '',
+      category_id: null,
       setujuKodeEtik: false,
     }
 

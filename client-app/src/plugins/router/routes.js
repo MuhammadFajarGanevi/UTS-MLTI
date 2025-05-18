@@ -9,18 +9,7 @@ export const routes = [
         component: () => import('@/pages/dashboard.vue'),
         meta: { requiresAuth: true },
       },
-      {
-        path: 'report',
-        component: () => import('@/pages/report.vue'),
-        meta: { requiresAuth: true },
-        
-      },
-      {
-        path: 'hasil',
-        component: () => import('@/pages/hasil.vue'),
-        meta: { requiresAuth: true },
-        
-      },
+
       {
         path: 'layanan',
         component: () => import('@/pages/layanan-user.vue'),
@@ -33,6 +22,13 @@ export const routes = [
         meta: { requiresAuth: true, role: 'admin' },
         
       },
+
+      // {
+      //   path: 'layanan-worker',
+      //   component: () => import('@/pages/layanan-worker.vue'),
+      //   meta: { requiresAuth: true, role: 'worker' },
+        
+      // },
       {
         path: 'laporan-layanan',
         component: () => import('@/pages/laporan-layanan-form.vue'),
@@ -51,10 +47,23 @@ export const routes = [
         meta: { requiresAuth: true, role: 'admin' },
         
       },
+
+      {
+        path: 'masalah-worker',
+        component: () => import('@/pages/masalah-worker.vue'),
+        meta: { requiresAuth: true, role: 'worker' },
+        
+      },
       {
         path: 'laporan-masalah',
         component: () => import('@/pages/masalah-form.vue'),
         meta: { requiresAuth: true, role: 'user' },
+        
+      },
+      {
+        path: 'report-worker',
+        component: () => import('@/pages/insiden-worker.vue'),
+        meta: { requiresAuth: true, role: 'worker' },
         
       },
     ],
