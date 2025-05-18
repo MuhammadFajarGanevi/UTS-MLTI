@@ -137,7 +137,7 @@ class ProblemService
                     'id' => $problem->reporter?->id,
                     'name' => $problem->reporter?->name,
                 ],
-                'Person In Control' => [
+                'personInControl' => [
                     'id' => $problem->personInControl?->id,
                     'name' => $problem->personInControl?->name,
                 ],
@@ -183,7 +183,7 @@ class ProblemService
                     'id' => $query->reporter?->id,
                     'name' => $query->reporter?->name,
                 ],
-                'Person in Control' => [
+                'personInControl' => [
                     'id' => $query->personInControl?->id ?? 'null',
                     'name' => $query->personInControl?->name ?? 'null',
                 ],
