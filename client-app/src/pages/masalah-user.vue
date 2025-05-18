@@ -5,8 +5,9 @@ import { onMounted, ref } from 'vue'
 const header = [
   { title: 'No', key: 'number' },
   { title: 'Judul', key: 'title' },
+  { title: 'Deskripsi', key: 'description' },
   { title: 'pelapor', key: 'langkah' },
-  { title: 'Penyelesai', key: 'hasil' },
+  { title: 'Penanggungjawab', key: 'hasil' },
   { title: 'Kategori Masalah', key: 'kategori' },
   { title: 'Komentar', key: 'komen' },
   { title: 'Waktu', key: 'tanggal' },
@@ -17,7 +18,7 @@ const incidents = ref([])
 
 onMounted(async () => {
   try {
-    const response = await api.get('https://www.kuliah-oskhar.my.id/api/v1/incident?length=1000')
+    const response = await api.get('https://www.kuliah-oskhar.my.id/api/v1/problem?length=1000')
     const incidentData = response.data?.[0]?.data?.data
 
     console.log(incidentData)
@@ -25,8 +26,10 @@ onMounted(async () => {
     incidents.value = incidentData.map((item, index) => ({
       number: index + 1,
       title: item.subject || '-',
+      description: item.description || '-',
       langkah: item.reporter?.name || '-',
-      hasil: item.resolver?.name || '-',
+
+      hasil: item.personInControl?.name || '-',
       kategori: item.categories?.[0]?.name || '-',
       komen: item.comment || '-',
       tanggal: item.created_at || '-',

@@ -36,152 +36,50 @@ const handleLogout = async () => {
     router.push('/login')
   }
 }
+
+// Routing berdasarkan role
+const reportRoute = computed(() => {
+  if (role === 'admin') return '/report-admin'
+  else if (role === 'worker') return '/report-worker'
+  else return '/report'
+})
+
+const layananRoute = computed(() => {
+  if (role === 'admin') return '/layanan-admin'
+  else if (role === 'worker') return '/layanan-worker'
+  else return '/layanan'
+})
+
+const masalahRoute = computed(() => {
+  if (role === 'admin') return '/masalah-admin'
+  else if (role === 'worker') return '/masalah-worker'
+  else return '/masalah'
+})
 </script>
 
 <template>
-  <!-- 👉 Dashboards -->
-  <!--
-    <VerticalNavGroup
-    :item="{
-    title: 'Dashboards',
-    // badgeContent: '5',
-    // badgeClass: 'bg-error',
-    icon: 'bx-home-smile',
-    }"
-    >
-    <VerticalNavLink
-    :item="{
-    title: 'Analytics',
-    to: '/dashboard',
-    }"
-    />
-    <VerticalNavLink
-    :item="{
-    title: 'Reports',
-    to: '/report',
-    }"
-    />
-    <VerticalNavLink
-    :item="{
-    title: 'hasil',
-    to: '/hasil',
-    }"
-    />
-    </VerticalNavGroup> 
-  -->
-
   <VerticalNavLink
     :item="{
       title: 'Dashboards',
-      // badgeContent: '5',
-      // badgeClass: 'bg-error',
       icon: 'bx-home-smile',
       to:'/dashboard',
     }"
   />
 
-  <!-- 👉 Front Pages -->
-  <!--
-    <VerticalNavGroup
-    :item="{
-    title: 'Front Pages',
-    icon: 'bx-file',
-    badgeContent: 'Pro',
-    badgeClass: 'bg-light-primary text-primary',
-    }"
-    >
-    <VerticalNavLink
-    :item="{
-    title: 'Landing',
-    href: 'https://demos.themeselection.com/sneat-vuetify-vuejs-admin-template/demo-1/front-pages/landing-page',
-    target: '_blank',
-    }"
-    />
-    <VerticalNavLink
-    :item="{
-    title: 'Pricing',
-    href: 'https://demos.themeselection.com/sneat-vuetify-vuejs-admin-template/demo-1/front-pages/pricing',
-    target: '_blank',
-    }"
-    />
-    <VerticalNavLink
-    :item="{
-    title: 'Payment',
-    href: 'https://demos.themeselection.com/sneat-vuetify-vuejs-admin-template/demo-1/front-pages/payment',
-    target: '_blank',
-    }"
-    />
-    <VerticalNavLink
-    :item="{
-    title: 'Checkout',
-    href: 'https://demos.themeselection.com/sneat-vuetify-vuejs-admin-template/demo-1/front-pages/checkout',
-    target: '_blank',
-    }"
-    />
-    <VerticalNavLink
-    :item="{
-    title: 'Help Center',
-    href: 'https://demos.themeselection.com/sneat-vuetify-vuejs-admin-template/demo-1/front-pages/help-center',
-    target: '_blank',
-    }"
-    />
-    </VerticalNavGroup> 
-  -->
-
+  
   <!-- 👉 Apps & Pages -->
   <VerticalNavSectionTitle
     :item="{
       heading: 'Laporan',
     }"
   />
-  <!--
-    <VerticalNavLink
-    :item="{
-    title: 'Email',
-    icon: 'bx-envelope',
-    href: 'https://demos.themeselection.com/sneat-vuetify-vuejs-admin-template/demo-1/apps/email',
-    target: '_blank',
-    badgeContent: 'Pro',
-    badgeClass: 'bg-light-primary text-primary',
-    }"
-    />
-    <VerticalNavLink
-    :item="{
-    title: 'Chat',
-    icon: 'bx-chat',
-    href: 'https://demos.themeselection.com/sneat-vuetify-vuejs-admin-template/demo-1/apps/chat',
-    target: '_blank',
-    badgeContent: 'Pro',
-    badgeClass: 'bg-light-primary text-primary',
-    }"
-    />
-    <VerticalNavLink
-    :item="{
-    title: 'Calendar',
-    icon: 'bx-calendar',
-    href: 'https://demos.themeselection.com/sneat-vuetify-vuejs-admin-template/demo-1/apps/calendar',
-    target: '_blank',
-    badgeContent: 'Pro',
-    badgeClass: 'bg-light-primary text-primary',
-    }"
-    />
-    <VerticalNavLink
-    :item="{
-    title: 'Kanban',
-    icon: 'bx-grid',
-    href: 'https://demos.themeselection.com/sneat-vuetify-vuejs-admin-template/demo-1/apps/kanban',
-    target: '_blank',
-    badgeContent: 'Pro',
-    badgeClass: 'bg-light-primary text-primary',
-    }"
-    /> 
-  -->
+ 
 
   <VerticalNavLink
     :item="{
       title: 'Insiden',
       icon: 'bx-news',
-      to: role === 'admin' ? '/report-admin' :'/report',
+      to: reportRoute,
     }"
   />
 
@@ -189,7 +87,7 @@ const handleLogout = async () => {
     :item="{
       title: 'Layanan',
       icon: 'bx-news',
-      to: role === 'admin' ? '/layanan-admin' :'/layanan',
+      to: layananRoute,
     }"
   />
 
@@ -197,7 +95,7 @@ const handleLogout = async () => {
     :item="{
       title: 'Laporan',
       icon: 'bx-news',
-      to: role === 'admin' ? '/masalah-admin' : '/masalah',
+      to: masalahRoute,
     }"
   />
 

@@ -12,7 +12,7 @@ const header = [
   { title: 'Komentar', key: 'komen' },
   { title: 'Waktu', key: 'tanggal' },
   { title: 'Status', key: 'status' },
-  { title: 'Hapus', key: 'hapus' },
+  { title: 'Edit', key: 'edit' },
 ]
 
 const incidents = ref([])
@@ -20,20 +20,14 @@ const showDialog = ref(false)
 const selectedIncident = ref(null)
 
 const form = ref({
-  status: '',
+  comment: '', // tambahkan ini
 })
-
-// Tambahkan opsi status
-const statusOptions = [
-  { label: 'Opened', value: 'opened' },
-  { label: 'Closed', value: 'closed' },
-]
 
 onMounted(async () => {
-  await fetchProblem()
+  await fetchIncidents()
 })
 
-const fetchProblem = async () => {
+const fetchIncidents = async () => {
   try {
     const response = await api.get('https://www.kuliah-oskhar.my.id/api/v1/problem?length=1000')
     const incidentData = response.data?.[0]?.data?.data || []
@@ -49,6 +43,7 @@ const fetchProblem = async () => {
       komen: item.comment || '-',
       tanggal: item.created_at || '-',
       status: item.status || 'Dikirim',
+      
     }))
   } catch (error) {
     console.error('Gagal mengambil data incident:', error)
@@ -57,9 +52,10 @@ const fetchProblem = async () => {
 
 const viewIncident = item => {
   selectedIncident.value = item
-  form.value.status = item.status // ⬅️ isi v-model dengan status saat ini
+  form.value.comment = item.komen // ambil dari field yang ditampilkan
   showDialog.value = true
 }
+
 
 const closeDialog = () => {
   showDialog.value = false
@@ -71,8 +67,8 @@ const deleteIncident = async item => {
   if (!confirm(`Yakin ingin menghapus incident "${item.title}"?`)) return
 
   try {
-    await api.delete(`https://www.kuliah-oskhar.my.id/api/v1/problem/${item.id}`)
-    await fetchProblem() // ⬅️ fix: fetchProblem bukan fetchIncidents
+    await api.delete(`https://www.kuliah-oskhar.my.id/api/v1/incident/${item.id}`)
+    await fetchIncidents() // Refresh data setelah delete
   } catch (error) {
     console.error('Gagal menghapus incident:', error)
   }
@@ -85,14 +81,14 @@ const saveIncident = async () => {
     const id = selectedIncident.value.id
 
     const dataToSend = {
-      status: form.value.status, // ⬅️ hasil akhir akan seperti { "status": "closed" }
+      comment: form.value.comment,
     }
 
     console.log(dataToSend)
 
-    await api.put(`https://www.kuliah-oskhar.my.id/api/v1/problem/status/${id}`, dataToSend)
+    await api.put(`https://www.kuliah-oskhar.my.id/api/v1/problem/worker/${id}`, dataToSend)
 
-    await fetchProblem() // refresh data
+    await fetchIncidents()
     closeDialog()
   } catch (error) {
     console.error('Gagal menyimpan perubahan:', error)
@@ -110,23 +106,24 @@ const saveIncident = async () => {
       :items="incidents"
       class="elevation-1"
     >
-      <template #item.status="{ item }">
+      <!--
+        <template #item.status="{item}">
         <span
-          style=" color: blue;cursor: pointer; text-decoration: underline;"
-          @click="viewIncident(item)"
+        style=" color: blue;cursor: pointer; text-decoration: underline;"
+        @click="viewIncident(item)"
         >
-          {{ item.status }}
+        {{ item.status }}
         </span>
-      </template>
-
-      <template #item.hapus="{ item }">
+        </template> 
+      -->
+      
+      <template #item.edit="{ item }">
         <VBtn
           icon
-          color="error"
-          @click="deleteIncident(item)"
+          @click="viewIncident(item)"
         >
           <VIcon>
-            bx-x
+            bx-pencil
           </VIcon>
         </VBtn>
       </template>
@@ -138,15 +135,24 @@ const saveIncident = async () => {
     max-width="600px"
   >
     <VCard>
-      <VCardTitle>Ubah Status</VCardTitle>
+      <VCardTitle>beri komentar</VCardTitle>
       <VCardText>
         <VForm @submit.prevent="saveIncident">
-          <VSelect
+          <!--
+            <VSelect
             v-model="form.status"
-            :items="statusOptions"
-            label="Status Masalah"
-            item-title="label"
-            item-value="value"
+            label="Status"
+            :items="[
+            'submitted', 'in_progress','resolved'
+            ]"
+            required
+            /> 
+          -->
+          <VTextField
+            v-model="form.comment"
+            placeholder="Masukkan komentar"
+            variant="outlined"
+            hide-details
             required
           />
         </VForm>
