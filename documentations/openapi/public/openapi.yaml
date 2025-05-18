@@ -482,6 +482,27 @@ paths:
           description: Successful response
           content:
             application/json: {}
+    delete:
+      tags:
+        - request-service
+      summary: Delete data
+      description: >-
+        This is a DELETE request, and it is used to delete data that was
+        previously created via a POST request. You typically identify the entity
+        being updated by including an identifier in the URL (eg. `id=1`).
+        A successful DELETE request typically returns a `200 OK`, `202
+        Accepted`, or `204 No Content` response code.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
   /request-service/category:
     get:
       tags:
@@ -562,29 +583,6 @@ paths:
           description: Successful response
           content:
             application/json: {}
-  /request-service/{id}:
-    delete:
-      tags:
-        - request-service
-      summary: Delete data
-      description: >-
-        This is a DELETE request, and it is used to delete data that was
-        previously created via a POST request. You typically identify the entity
-        being updated by including an identifier in the URL (eg. `id=1`).
-        A successful DELETE request typically returns a `200 OK`, `202
-        Accepted`, or `204 No Content` response code.
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json: {}
-
   /problem:
     get:
       tags:
