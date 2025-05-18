@@ -257,9 +257,6 @@ paths:
                type: string
                example: Error machine
              
-
-                
-
   /incident/{id}:
     get:
       summary: Get incident by ID
