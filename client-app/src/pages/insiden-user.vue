@@ -5,9 +5,6 @@ import { onMounted, ref } from 'vue'
 const header = [
   { title: 'No', key: 'number' },
   { title: 'Judul', key: 'title' },
-  { title: 'Deskripsi', key: 'description' },
-  { title: 'pelapor', key: 'langkah' },
-  { title: 'Penanggungjawab', key: 'hasil' },
   { title: 'Kategori Masalah', key: 'kategori' },
   { title: 'Komentar', key: 'komen' },
   { title: 'Waktu', key: 'tanggal' },
@@ -18,7 +15,7 @@ const incidents = ref([])
 
 onMounted(async () => {
   try {
-    const response = await api.get('https://www.kuliah-oskhar.my.id/api/v1/problem?length=1000')
+    const response = await api.get('https://www.kuliah-oskhar.my.id/api/v1/incident?length=1000')
     const incidentData = response.data?.[0]?.data?.data
 
     console.log(incidentData)
@@ -26,17 +23,15 @@ onMounted(async () => {
     incidents.value = incidentData.map((item, index) => ({
       number: index + 1,
       title: item.subject || '-',
-      description: item.description || '-',
       langkah: item.reporter?.name || '-',
-
-      hasil: item.personInControl?.name || '-',
+      hasil: item.resolver?.name || '-',
       kategori: item.categories?.[0]?.name || '-',
       komen: item.comment || '-',
       tanggal: item.created_at || '-',
       status: item.status || 'Dikirim',
     }))
   } catch (error) {
-    console.error('Gagal mengambil data problem:', error)
+    console.error('Gagal mengambil data incident:', error)
   }
 })
 </script>
@@ -44,7 +39,7 @@ onMounted(async () => {
 <template>
   <VCard>
     <VCardTitle>
-      Laporan Masalah
+      Laporan Insiden User
     </VCardTitle>
     <VDataTable
       :headers="header"
@@ -55,7 +50,7 @@ onMounted(async () => {
     <div class="d-flex justify-end me-4 mb-4">
       <VBtn
         color="primary"
-        to="/laporan-masalah"
+        to="/laporan-insiden"
       >
         Tambah
       </VBtn>

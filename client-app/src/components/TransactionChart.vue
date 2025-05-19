@@ -9,17 +9,17 @@
 
 <script setup>
 import {
+  CategoryScale,
   Chart as ChartJS,
-  Title,
-  Tooltip,
   Legend,
+  LinearScale,
   LineElement,
   PointElement,
-  CategoryScale,
-  LinearScale,
+  Title,
+  Tooltip,
 } from 'chart.js'
-import { Line } from 'vue-chartjs'
 import { computed, defineProps } from 'vue'
+import { Line } from 'vue-chartjs'
 
 const props = defineProps({
   dataByPeriod: {

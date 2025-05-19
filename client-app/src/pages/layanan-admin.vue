@@ -1,133 +1,172 @@
 <script setup>
-import axios from '@/plugins/axios'
-import jsPDF from 'jspdf'
-import autoTable from 'jspdf-autotable'
+import api from '@/plugins/axios'
 import { onMounted, ref } from 'vue'
 
-const headers = [
+const header = [
   { title: 'No', key: 'number' },
-  { title: 'Judul', key: 'subject' },
+  { title: 'Judul', key: 'title' },
   { title: 'Deskripsi', key: 'description' },
-  { title: 'Manfaat', key: 'content' },
-  { title: 'Alternatif', key: 'alternatif' },
-  { title: 'PIC', key: 'pic' },
-  { title: 'Kategori', key: 'kategori' },
-  { title: 'Tanggal', key: 'created_at' },
+  { title: 'pelapor', key: 'langkah' },
+  { title: 'Penanggungjawab', key: 'hasil' },
+  { title: 'Kategori Masalah', key: 'kategori' },
+  { title: 'Komentar', key: 'komen' },
+  { title: 'Waktu', key: 'tanggal' },
   { title: 'Status', key: 'status' },
   { title: 'Hapus', key: 'hapus' },
 ]
 
-const layanan = ref([])
+const incidents = ref([])
+const showDialog = ref(false)
+const selectedIncident = ref(null)
 
-onMounted(async () => {
-  await fetchLayanan()
+const form = ref({
+  status: '',
 })
 
-const fetchLayanan = async () => {
+// Tambahkan opsi status
+const statusOptions = [
+  { label: 'submitted', value: 'submitted' },
+  { label: 'in progress', value: 'in_progress' },
+  { label: 'completed', value: 'completed' },
+]
+
+onMounted(async () => {
+  await fetchProblem()
+})
+
+const fetchProblem = async () => {
   try {
-    const response = await axios.get('/request-service?length=1000')
-    const raw = response.data[0]
+    const response = await api.get('https://www.kuliah-oskhar.my.id/api/v1/request-service?length=1000')
+    const incidentData = response.data?.[0]?.data?.data || []
 
-    if (raw && raw.status && raw.data?.data) {
-      layanan.value = raw.data.data.map((item, index) => ({
-        id: item.id,
-        number: index + 1,
-        subject: item.subject || '-',
-        description: item.description || '-',
-        content: item.content || '-',
-        alternatif: '-', // tidak ada di API
-        pic: item.pic?.name || '-',
-        kategori: item.categories?.[0]?.name || '-',
-        created_at: item.created_at?.split('T')[0] || '-',
-        status: item.status || '-',
-      }))
-    } else {
-      console.warn('Response tidak sesuai format yang diharapkan:', raw)
-    }
-  } catch (err) {
-    console.error('Gagal mengambil data layanan:', err)
-  }
-}
-
-const deleteLayanan = async item => {
-  if (!confirm(`Yakin ingin menghapus layanan "${item.subject}"?`)) return
-
-  try {
-    await axios.delete(`/request-service/${item.id}`)
-    await fetchLayanan()
+    incidents.value = incidentData.map((item, index) => ({
+      number: index + 1,
+      id: item.id,
+      title: item.subject || '-',
+      description: item.description || '-',
+      langkah: item.reporter?.name || '-',
+      hasil: item.personInControl?.name || '-',
+      kategori: item.categories?.[0]?.name || '-',
+      komen: item.comment || '-',
+      tanggal: item.created_at || '-',
+      status: item.status || 'Dikirim',
+    }))
   } catch (error) {
-    console.error('Gagal menghapus layanan:', error)
+    console.error('Gagal mengambil data incident:', error)
   }
 }
 
-const printPDF = () => {
-  const doc = new jsPDF()
+const viewIncident = item => {
+  selectedIncident.value = item
+  form.value.status = item.status // ⬅️ isi v-model dengan status saat ini
+  showDialog.value = true
+}
 
-  const tableColumn = [
-    'No',
-    'Judul',
-    'Deskripsi',
-    'Manfaat',
-    'Alternatif',
-    'PIC',
-    'Kategori',
-    'Tanggal',
-    'Status',
-  ]
+const closeDialog = () => {
+  showDialog.value = false
+  selectedIncident.value = null
+  form.value.status = ''
+}
 
-  const tableRows = layanan.value.map(item => [
-    item.number,
-    item.subject,
-    item.description,
-    item.content,
-    item.alternatif,
-    item.pic,
-    item.kategori,
-    item.created_at,
-    item.status,
-  ])
+const deleteIncident = async item => {
+  if (!confirm(`Yakin ingin menghapus incident "${item.title}"?`)) return
 
-  autoTable(doc, {
-    head: [tableColumn],
-    body: tableRows,
-    styles: { fontSize: 8 },
-    headStyles: { fillColor: [220, 53, 69] }, // warna merah
-    margin: { top: 20 },
-  })
+  try {
+    await api.delete(`https://www.kuliah-oskhar.my.id/api/v1/request-service/${item.id}`)
+    await fetchProblem() // ⬅️ fix: fetchProblem bukan fetchIncidents
+  } catch (error) {
+    console.error('Gagal menghapus incident:', error)
+  }
+}
 
-  doc.save('laporan-layanan.pdf')
+const saveIncident = async () => {
+  if (!selectedIncident.value) return
+
+  try {
+    const id = selectedIncident.value.id
+
+    const dataToSend = {
+      status: form.value.status, // ⬅️ hasil akhir akan seperti { "status": "closed" }
+    }
+
+    console.log(dataToSend)
+
+    await api.put(`https://www.kuliah-oskhar.my.id/api/v1/request-service/status/${id}`, dataToSend)
+
+    await fetchProblem() // refresh data
+    closeDialog()
+  } catch (error) {
+    console.error('Gagal menyimpan perubahan:', error)
+  }
 }
 </script>
 
 <template>
   <VCard>
     <VCardTitle>
-      Permintaan Layanan Admin
+      Laporan Masalah
     </VCardTitle>
-
     <VDataTable
-      :headers="headers"
-      :items="layanan"
+      :headers="header"
+      :items="incidents"
       class="elevation-1"
     >
+      <template #item.status="{ item }">
+        <span
+          style=" color: blue;cursor: pointer; text-decoration: underline;"
+          @click="viewIncident(item)"
+        >
+          {{ item.status }}
+        </span>
+      </template>
+
       <template #item.hapus="{ item }">
         <VBtn
           icon
-          @click="deleteLayanan(item)"
+          color="error"
+          @click="deleteIncident(item)"
         >
-          <VIcon>bx-trash</VIcon>
+          <VIcon>
+            bx-x
+          </VIcon>
         </VBtn>
       </template>
     </VDataTable>
-
-    <div class="d-flex justify-end me-4 mb-4 mt-4">
-      <VBtn
-        color="error"
-        class="mb-4"
-        @click="printPDF"
-      >
-        Cetak PDF
-      </VBtn>
-    </div>
   </VCard>
+
+  <VDialog
+    v-model="showDialog"
+    max-width="600px"
+  >
+    <VCard>
+      <VCardTitle>Ubah Status</VCardTitle>
+      <VCardText>
+        <VForm @submit.prevent="saveIncident">
+          <VSelect
+            v-model="form.status"
+            :items="statusOptions"
+            label="Status Masalah"
+            item-title="label"
+            item-value="value"
+            required
+          />
+        </VForm>
+      </VCardText>
+      <VCardActions>
+        <VSpacer />
+        <VBtn
+          text
+          @click="closeDialog"
+        >
+          Tutup
+        </VBtn>
+        <VBtn
+          color="primary"
+          @click="saveIncident"
+        >
+          Simpan
+        </VBtn>
+      </VCardActions>
+    </VCard>
+  </VDialog>
 </template>

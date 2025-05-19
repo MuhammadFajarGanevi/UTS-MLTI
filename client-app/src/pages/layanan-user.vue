@@ -1,7 +1,7 @@
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router' // ⬅️ Tambahkan ini
 import axios from '@/plugins/axios'
+import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router' // ⬅️ Tambahkan ini
 
 const router = useRouter() // ⬅️ Tambahkan ini
 

@@ -115,8 +115,6 @@
 
 <script setup>
 import TransactionChart from '@/components/TransactionChart.vue'
-import axios from 'axios'
-import dayjs from 'dayjs'
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 

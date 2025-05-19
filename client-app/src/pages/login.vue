@@ -108,15 +108,15 @@ const handleLogin = async () => {
               class="d-flex"
               v-html="logo"
             />
-            <h1 class="app-logo-title">
-              sneat
+            <h1>
+              SiKampus
             </h1>
           </RouterLink>
         </VCardItem>
 
         <VCardText>
           <h4 class="text-h4 mb-1">
-            Welcome to Sneat! 👋🏻
+            Welcome to SiKampus! 👋🏻
           </h4>
           <p class="mb-0">
             Please sign-in to your account and start the adventure
