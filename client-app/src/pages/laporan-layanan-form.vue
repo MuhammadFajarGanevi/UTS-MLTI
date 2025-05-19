@@ -1,179 +1,15 @@
-<template>
-  <VContainer>
-    <h2 class="mb-6 font-weight-bold">
-      Laporan Layanan
-    </h2>
-
-    <VForm @submit.prevent="kirimLaporan">
-      <div
-        class="mb-4"
-        style="max-inline-size: 600px;"
-      >
-        <label class="mb-1 d-block font-weight-medium">Judul</label>
-        <VTextField
-          v-model="form.judul"
-          placeholder="Masukkan judul insiden"
-          variant="outlined"
-          hide-details
-          required
-        />
-      </div>
-
-      <div
-        class="mb-4"
-        style="max-inline-size: 600px;"
-      >
-        <label class="mb-1 d-block font-weight-medium">Deskripsi Fitur</label>
-        <VTextarea
-          v-model="form.deskripsi"
-          label="Jelaskan fitur tersebut secara rinci dan alasannya"
-          variant="outlined"
-          rows="2"
-          hide-details
-          required
-        />
-      </div>
-
-      <div
-        class="mb-4"
-        style="max-inline-size: 600px;"
-      >
-        <label class="mb-1 d-block font-weight-medium">Manfaat</label>
-        <VTextarea
-          v-model="form.manfaat"
-          label="Jelaskan manfaat yang diperoleh"
-          variant="outlined"
-          rows="2"
-          hide-details
-          required
-        />
-      </div>
-
-      <div
-        class="mb-4"
-        style="max-inline-size: 600px;"
-      >
-        <label class="mb-1 d-block font-weight-medium">Alternatif yang Dipertimbangkan</label>
-        <VTextarea
-          v-model="form.alternatif"
-          label="Jelaskan alternatif yang telah anda pertimbangkan"
-          variant="outlined"
-          input
-          rows="2"
-          hide-details
-          required
-        />
-      </div>
-
-      <div
-        class="mb-4"
-        style="max-inline-size: 600px;"
-      >
-        <label class="mb-1 d-block font-weight-medium">Tanggal</label>
-        
-        <VTextField
-          v-model="form.tanggal"
-          type="date"
-          label="Pilih tanggal"
-          variant="outlined"
-          hide-details
-          required
-        /> 
-        <!--
-          <VTextarea
-          v-model="form.tanggal"
-          label="Jelaskan alternatif yang telah anda pertimbangkan"
-          variant="outlined"
-          input
-          rows="2"
-          hide-details
-          /> 
-        -->
-      </div>
-
-
-      <div
-        class="mb-4"
-        style="max-inline-size: 600px;"
-      >
-        <label class="mb-2 d-block font-weight-medium">Kode Etik</label>
-        <label style="color: #666; font-size: 0.9rem; font-weight: 300;">
-          Dengan mengirimkan masalah ini, Anda setuju untuk mematuhi Kode Etik proyek.
-        </label>
-        <VDialog
-          v-model="dialogKodeEtik"
-          max-width="800"
-        >
-          <template #activator="{ props }">
-            <VCheckbox
-              v-bind="props"
-              :model-value="form.setujuKodeEtik"
-              label="Saya setuju untuk mengikuti Kode Etik proyek ini."
-              required
-              @change="dialogKodeEtik = true"
-            />
-          </template>
-          <VCard>
-            <VCardTitle class="text-h6">
-              Kode Etik
-            </VCardTitle>
-            <VCardText style="max-block-size: 60vh; overflow-y: auto; white-space: pre-line;">
-              {{ kodeEtikText }}
-            </VCardText>
-            <VCardActions>
-              <VSpacer />
-              <VBtn
-                text
-                @click="dialogKodeEtik = false"
-              >
-                Tolak
-              </VBtn>
-              <VBtn
-                color="primary"
-                @click="setujuiKodeEtik"
-              >
-                Setuju
-              </VBtn>
-            </VCardActions>
-          </VCard>
-        </VDialog>
-      </div>
-
-      <div class="d-flex justify-end mt-6">
-        <VBtn
-          text
-          color="white"
-          @click="router.back()"
-        >
-          Batal
-        </VBtn>
-        <VBtn
-          type="submit"
-          color="primary"
-        >
-          Kirim
-        </VBtn>
-      </div>
-    </VForm>
-  </VContainer>
-</template>
-
 <script setup>
-import { useLaporanStore } from '@/store/laporan-store'
+import axios from '@/plugins/axios'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
-
-
 const router = useRouter()
-const laporanStore = useLaporanStore()
 
 const form = ref({
   judul: '',
   deskripsi: '',
   manfaat: '',
   alternatif: '',
-  tanggal: '',
   setujuKodeEtik: false,
 })
 
@@ -224,21 +60,190 @@ Project maintainers will follow these Community Impact Guidelines in determining
     Community Impact: A serious violation of community standards, including sustained inappropriate behavior.
     Consequence: A temporary ban from any sort of interaction or public communication with the community for a specified period of time. No public or private interaction with the people involved, including unsolicited interaction with those enforcing the Code of Conduct, is allowed during this period. Violating these terms may lead to a permanent ban.
     4. Permanent Ban
-    Community Impact: Demonstrating a pattern of violation of community standards, including sustained inappropriate behavior, harassment of an individual, or aggression toward or disparagement of classes of individuals. Consequence: A permanent ban from any sort of public interaction within the community.` // Truncated for brevity, continue as needed
+    Community Impact: Demonstrating a pattern of violation of community standards, including sustained inappropriate behavior, harassment of an individual, or aggression toward or disparagement of classes of individuals. Consequence: A permanent ban from any sort of public interaction within the community.
+`
 
+// Buka dialog saat checkbox diklik
+const bukaDialogKodeEtik = () => {
+  dialogKodeEtik.value = true
+}
+
+// Klik tombol "Setuju" di dialog
 const setujuiKodeEtik = () => {
   form.value.setujuKodeEtik = true
   dialogKodeEtik.value = false
 }
 
-const kirimLaporan = () => {
-  laporanStore.tambahLaporan({ ...form.value })
-  router.push('/layanan') // Arahkan ke halaman tabel
+// Klik tombol "Tolak" di dialog
+const tolakKodeEtik = () => {
+  form.value.setujuKodeEtik = false
+  dialogKodeEtik.value = false
+}
+
+// Fungsi kirim laporan
+const kirimLaporan = async () => {
+  try {
+    const getRes = await axios.get('/request-service?length=1000')
+    const raw = getRes.data[0]
+    const existingData = raw?.data?.data || []
+    const maxId = Math.max(...existingData.map(item => item.id || 0))
+    const newId = maxId + 1
+
+    const payload = {
+      id: newId,
+      subject: form.value.judul,
+      description: form.value.deskripsi,
+      content: form.value.manfaat,
+      alternatif: form.value.alternatif,
+      category_id: [1], // Ganti sesuai kebutuhan
+      timestamp: new Date().toISOString(), // Jika dibutuhkan oleh backend
+    }
+
+    const postRes = await axios.post('/request-service', payload)
+
+    console.log('Data berhasil dikirim:', postRes.data)
+
+    router.push('/layanan')
+  } catch (err) {
+    console.error('Gagal mengirim data:', err)
+  }
 }
 </script>
 
-<style scoped>
-label {
-  display: block;
-}
-</style>
+<template>
+  <VContainer>
+    <h2 class="mb-6 font-weight-bold">
+      Laporan Layanan Form
+    </h2>
+
+    <VForm @submit.prevent="kirimLaporan">
+      <VRow dense>
+        <VCol
+          cols="12"
+          md="6"
+        >
+          <div
+            class="mb-4"
+            style="max-inline-size: 600px;"
+          >
+            <label class="mb-1 d-block font-weight-medium">Judul</label>
+            <VTextField
+              v-model="form.judul"
+              placeholder="Masukkan judul fitur"
+              variant="outlined"
+              hide-details
+              required
+            />
+          </div>
+
+          <div
+            class="mb-4"
+            style="max-inline-size: 600px;"
+          >
+            <label class="mb-1 d-block font-weight-medium">Deskripsi Fitur</label>
+            <VTextarea
+              v-model="form.deskripsi"
+              placeholder="Jelaskan fitur yang diusulkan"
+              variant="outlined"
+              rows="3"
+              hide-details
+              required
+            />
+          </div>
+
+          <div
+            class="mb-4"
+            style="max-inline-size: 600px;"
+          >
+            <label class="mb-1 d-block font-weight-medium">Manfaat</label>
+            <VTextarea
+              v-model="form.manfaat"
+              placeholder="Jelaskan manfaat dari fitur ini"
+              variant="outlined"
+              rows="3"
+              hide-details
+              required
+            />
+          </div>
+
+          <div
+            class="mb-4"
+            style="max-inline-size: 600px;"
+          >
+            <label class="mb-1 d-block font-weight-medium">Alternatif yang Dipertimbangkan</label>
+            <VTextarea
+              v-model="form.alternatif"
+              placeholder="Jelaskan alternatif yang telah dipertimbangkan"
+              variant="outlined"
+              rows="3"
+              hide-details
+              required
+            />
+          </div>
+        </VCol>
+
+
+        <VCol cols="12">
+          <VCheckbox
+            :model-value="form.setujuKodeEtik"
+            label="Saya setuju untuk mengikuti Kode Etik proyek ini."
+            required
+            @click.prevent="bukaDialogKodeEtik"
+          />
+        </VCol>
+
+        <!-- Dialog Kode Etik -->
+        <VDialog
+          v-model="dialogKodeEtik"
+          max-width="800"
+        >
+          <VCard>
+            <VCardTitle class="text-h6">
+              Kode Etik
+            </VCardTitle>
+            <VCardText style="max-block-size: 60vh; overflow-y: auto; white-space: pre-line;">
+              {{ kodeEtikText }}
+            </VCardText>
+            <VCardActions>
+              <VSpacer />
+              <VBtn
+                text
+                color="error"
+                @click="tolakKodeEtik"
+              >
+                Tolak
+              </VBtn>
+              <VBtn
+                color="primary"
+                @click="setujuiKodeEtik"
+              >
+                Setuju
+              </VBtn>
+            </VCardActions>
+          </VCard>
+        </VDialog>
+
+        <!-- Tombol Aksi -->
+        <VCol
+          cols="12"
+          class="d-flex justify-end mt-6"
+        >
+          <VBtn
+            text
+            color="grey"
+            @click="router.back()"
+          >
+            Batal
+          </VBtn>
+          <VBtn
+            type="submit"
+            color="primary"
+            class="ml-2"
+          >
+            Kirim
+          </VBtn>
+        </VCol>
+      </VRow>
+    </VForm>
+  </VContainer>
+</template>
