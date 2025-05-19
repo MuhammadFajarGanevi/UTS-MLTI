@@ -1,153 +1,186 @@
-<script setup>
-import AnalyticsCongratulations from '@/views/dashboard/AnalyticsCongratulations.vue'
-import AnalyticsFinanceTabs from '@/views/dashboard/AnalyticsFinanceTab.vue'
-import AnalyticsOrderStatistics from '@/views/dashboard/AnalyticsOrderStatistics.vue'
-import AnalyticsProfitReport from '@/views/dashboard/AnalyticsProfitReport.vue'
-import AnalyticsTotalRevenue from '@/views/dashboard/AnalyticsTotalRevenue.vue'
-import AnalyticsTransactions from '@/views/dashboard/AnalyticsTransactions.vue'
+<template>
+  <VContainer
+    fluid
+    class="dashboard-container"
+  >
+    <!-- Judul -->
+    <h2 class="text-h5 font-weight-bold mb-4">
+      Dashboard
+    </h2>
 
-// 👉 Images
-import chart from '@images/cards/chart-success.png'
-import card from '@images/cards/credit-card-primary.png'
-import paypal from '@images/cards/paypal-error.png'
-import wallet from '@images/cards/wallet-info.png'
+    <!-- Statistik Atas -->
+    <VRow
+      class="mb-4"
+      dense
+    >
+      <VCol
+        cols="12"
+        sm="4"
+      >
+        <VCard class="stat-card">
+          <div class="card-title">
+            <VIcon
+              color="primary"
+              class="me-2"
+            >
+              bx-bar-chart
+            </VIcon>
+            Total Transaksi
+          </div>
+          <div class="card-value">
+            {{ totalTransaksi }}
+          </div>
+          <div class="card-sub">
+            Hasil Akumulatif
+          </div>
+        </VCard>
+      </VCol>
+
+      <VCol
+        cols="12"
+        sm="4"
+      >
+        <VCard class="stat-card">
+          <div class="card-title">
+            <VIcon
+              color="success"
+              class="me-2"
+            >
+              bx-check-circle
+            </VIcon>
+            Transaksi Sukses
+          </div>
+          <div class="card-value">
+            {{ transaksiSukses }}
+          </div>
+          <div class="card-sub">
+            Rate:
+            {{
+              (totalTransaksi + totalLayanan) > 0
+                ? (((transaksiSukses + layananSukses) / (totalTransaksi + totalLayanan)) * 100).toFixed(1)
+                : 0
+            }}%
+          </div>
+        </VCard>
+      </VCol>
+
+      <VCol
+        cols="12"
+        sm="4"
+      >
+        <VCard class="stat-card">
+          <div class="card-title">
+            <VIcon
+              color="error"
+              class="me-2"
+            >
+              bx-x-circle
+            </VIcon>
+            Transaksi Gagal
+          </div>
+          <div class="card-value">
+            {{ transaksiGagal }}
+          </div>
+          <div class="card-sub">
+            Rate:
+            {{
+              (totalTransaksi + totalLayanan) > 0
+                ? (((transaksiGagal + layananGagal) / (totalTransaksi + totalLayanan)) * 100).toFixed(1)
+                : 0
+            }}%
+          </div>
+        </VCard>
+      </VCol>
+    </VRow>
+
+    <!-- Grafik -->
+    <VRow dense>
+      <VCol cols="12">
+        <VCard class="graph-card pa-4">
+          <div class="font-weight-bold text-body-1 mb-2">
+            <VIcon
+              color="primary"
+              class="me-2"
+            >
+              bx-money
+            </VIcon>
+            Grafik Jumlah Transaksi per Tanggal
+          </div>
+          <TransactionChart :data-by-date="dataChartByDate" />
+        </VCard>
+      </VCol>
+    </VRow>
+  </VContainer>
+</template>
+
+<script setup>
+import TransactionChart from '@/components/TransactionChart.vue'
+import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const totalTransaksi = ref(233)
+const transaksiSukses = ref(229)
+const transaksiGagal = ref(4)
+
+const dataChartIncidentByDate = ref({})
+const dataChartLayananByDate = ref({})
+
+const dataChartByDate = ref({})
+
+onMounted(async () => {
+  try {
+    const token = localStorage.getItem('token')
+    if (!token) {
+      alert('Token tidak ditemukan. Silakan login terlebih dahulu.')
+      router.push('/login')
+      
+      return
+    }
+  } catch (err) {
+    console.error('Gagal mengambil data:', err)
+    alert('Gagal mengambil data. Periksa token dan koneksi internet.')
+  }
+})
 </script>
 
-<template>
-  <VRow>
-    <!-- 👉 Congratulations -->
-    <VCol
-      cols="12"
-      md="8"
-    >
-      <AnalyticsCongratulations />
-    </VCol>
+<style scoped>
+.dashboard-container {
+  background-color: #f9f9f9;
+  min-block-size: 100vh;
+  padding-block-start: 20px;
+}
 
-    <VCol
-      cols="12"
-      sm="4"
-    >
-      <VRow>
-        <!-- 👉 Profit -->
-        <VCol
-          cols="12"
-          md="6"
-        >
-          <CardStatisticsVertical
-            v-bind="{
-              title: 'Profit',
-              image: chart,
-              stats: '$12,628',
-              change: 72.80,
-            }"
-          />
-        </VCol>
+.stat-card {
+  padding: 20px;
+  border-radius: 12px;
+  background-color: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 6%);
+  text-align: center;
+}
 
-        <!-- 👉 Sales -->
-        <VCol
-          cols="12"
-          md="6"
-        >
-          <CardStatisticsVertical
-            v-bind="{
-              title: 'Sales',
-              image: wallet,
-              stats: '$4,679',
-              change: 28.42,
-            }"
-          />
-        </VCol>
-      </VRow>
-    </VCol>
+.card-title {
+  color: #4b5563;
+  font-weight: 600;
+}
 
-    <!-- 👉 Total Revenue -->
-    <VCol
-      cols="12"
-      md="8"
-      order="2"
-      order-md="1"
-    >
-      <AnalyticsTotalRevenue />
-    </VCol>
+.card-value {
+  color: #111827;
+  font-size: 26px;
+  font-weight: bold;
+  margin-block-start: 8px;
+}
 
-    <VCol
-      cols="12"
-      sm="8"
-      md="4"
-      order="1"
-      order-md="2"
-    >
-      <VRow>
-        <!-- 👉 Payments -->
-        <VCol
-          cols="12"
-          sm="6"
-        >
-          <CardStatisticsVertical
-            v-bind=" {
-              title: 'Payments',
-              image: paypal,
-              stats: '$2,468',
-              change: -14.82,
-            }"
-          />
-        </VCol>
+.card-sub {
+  color: #9ca3af;
+  font-size: 14px;
+  margin-block-start: 4px;
+}
 
-        <!-- 👉 Revenue -->
-        <VCol
-          cols="12"
-          sm="6"
-        >
-          <CardStatisticsVertical
-            v-bind="{
-              title: 'Transactions',
-              image: card,
-              stats: '$14,857',
-              change: 28.14,
-            }"
-          />
-        </VCol>
-      </VRow>
-
-      <VRow>
-        <!-- 👉 Profit Report -->
-        <VCol
-          cols="12"
-          sm="12"
-        >
-          <AnalyticsProfitReport />
-        </VCol>
-      </VRow>
-    </VCol>
-
-    <!-- 👉 Order Statistics -->
-    <VCol
-      cols="12"
-      md="4"
-      sm="6"
-      order="3"
-    >
-      <AnalyticsOrderStatistics />
-    </VCol>
-
-    <!-- 👉 Tabs chart -->
-    <VCol
-      cols="12"
-      md="4"
-      sm="6"
-      order="3"
-    >
-      <AnalyticsFinanceTabs />
-    </VCol>
-
-    <!-- 👉 Transactions -->
-    <VCol
-      cols="12"
-      md="4"
-      sm="6"
-      order="3"
-    >
-      <AnalyticsTransactions />
-    </VCol>
-  </VRow>
-</template>
+.graph-card {
+  border-radius: 12px;
+  background-color: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 6%);
+}
+</style>
